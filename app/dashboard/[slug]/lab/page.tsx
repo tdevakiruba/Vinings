@@ -16,15 +16,15 @@ export default async function LabPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("programs")
-    .select("id, slug, name, color, badge")
+    .from("VC_programs")
+    .select("id, slug, title")
     .eq("slug", slug)
     .single()
 
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("enrollments")
+    .from("VC_enrollments")
     .select("id")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -35,10 +35,9 @@ export default async function LabPage({
 
   // Fetch next upcoming office hours for this program
   const { data: nextOfficeHours } = await supabase
-    .from("office_hours")
-    .select("id, title, description, meeting_url, scheduled_at, duration_minutes, status")
-    .eq("program_id", program.id)
-    .in("status", ["scheduled", "live"])
+    .from("VC_office_hours")
+    .select("id, title, description, meeting_url, scheduled_at, duration_minutes, is_active")
+    .eq("is_active", true)
     .gte("scheduled_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
     .order("scheduled_at", { ascending: true })
     .limit(1)
@@ -46,19 +45,19 @@ export default async function LabPage({
 
   // Fetch user's submissions
   const { data: submissions } = await supabase
-    .from("lab_submissions")
-    .select("id, category, title, description, status, created_at")
+    .from("VC_lab_submissions")
+    .select("id, lab_name, submission_text, status, submitted_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
-    .order("created_at", { ascending: false })
+    .order("submitted_at", { ascending: false })
 
   return (
     <LabClient
       program={{
         id: program.id,
         slug: program.slug,
-        name: program.name,
-        badgeColor: program.color ?? "#00c892",
+        name: program.title,
+        badgeColor: "#00c892",
       }}
       nextOfficeHours={nextOfficeHours ?? null}
       initialSubmissions={submissions ?? []}

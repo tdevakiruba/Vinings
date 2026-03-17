@@ -12,15 +12,15 @@ export async function generateMetadata({
     const { slug } = await params
     const supabase = await createClient()
     const { data: program } = await supabase
-      .from("programs")
-      .select("name, tagline")
+      .from("VC_programs")
+      .select("title, tagline")
       .eq("slug", slug)
       .maybeSingle()
 
     if (!program) return { title: "Program Not Found" }
 
     return {
-      title: program.name,
+      title: program.title,
       description: program.tagline,
     }
   } catch {
@@ -43,7 +43,7 @@ export default async function ProgramPage({
   }
 
   const { data: program } = await supabase
-    .from("programs")
+    .from("VC_programs")
     .select("*")
     .eq("slug", slug)
     .maybeSingle()
@@ -59,17 +59,17 @@ export default async function ProgramPage({
     },
   ] = await Promise.all([
     supabase
-      .from("program_features")
+      .from("VC_program_features")
       .select("*")
       .eq("program_id", program.id)
       .order("sort_order"),
     supabase
-      .from("program_phases")
+      .from("VC_program_phases")
       .select("*")
       .eq("program_id", program.id)
       .order("sort_order"),
     supabase
-      .from("program_pricing")
+      .from("VC_program_pricing")
       .select("*")
       .eq("program_id", program.id)
       .order("sort_order"),
@@ -80,7 +80,7 @@ export default async function ProgramPage({
   let hasSubscription = false
   if (user) {
     const { data: sub } = await supabase
-      .from("subscriptions")
+      .from("VC_subscriptions")
       .select("id, status")
       .eq("user_id", user.id)
       .eq("program_id", program.id)
@@ -109,13 +109,13 @@ export default async function ProgramPage({
   let curriculum: {
     day_number: number
     title: string
-    key_theme: string | null
+    theme: string | null
   }[] = []
 
-  if (slug === "workforce-ready") {
+  if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
-      .from("workforce_mindset_21day")
-      .select("day_number, title, key_theme")
+      .from("VC_workforce_mindset_21day")
+      .select("day_number, title, theme")
       .order("day_number")
     curriculum = days ?? []
   }

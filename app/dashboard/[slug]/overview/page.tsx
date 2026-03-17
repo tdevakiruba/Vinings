@@ -18,8 +18,8 @@ export default async function OverviewPage({
 
   // Get program
   const { data: program } = await supabase
-    .from("programs")
-    .select("id, slug, name, tagline, color, badge, duration, audience, short_description")
+    .from("VC_programs")
+    .select("id, slug, title, tagline, duration, description")
     .eq("slug", slug)
     .single()
 
@@ -27,8 +27,8 @@ export default async function OverviewPage({
 
   // Get enrollment
   const { data: enrollment } = await supabase
-    .from("enrollments")
-    .select("id, current_day, started_at, status")
+    .from("VC_enrollments")
+    .select("id, progress_percentage, enrolled_at, status")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
     .eq("status", "active")
@@ -38,19 +38,18 @@ export default async function OverviewPage({
 
   // Get subscription
   const { data: subscription } = await supabase
-    .from("subscriptions")
-    .select("plan_tier, current_period_start, current_period_end")
+    .from("VC_subscriptions")
+    .select("plan_type, current_period_start, current_period_end")
     .eq("user_id", user.id)
-    .eq("program_id", program.id)
     .eq("status", "active")
     .maybeSingle()
 
   // Calculate progress
   const durationMatch = program.duration?.match(/(\d+)/)
   const totalDays = durationMatch ? parseInt(durationMatch[1], 10) : 21
-  let currentDay = enrollment.current_day ?? 1
-  if (enrollment.started_at) {
-    const start = new Date(enrollment.started_at)
+  let currentDay = 1
+  if (enrollment.enrolled_at) {
+    const start = new Date(enrollment.enrolled_at)
     const now = new Date()
     const diffDays = Math.floor(
       (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
@@ -60,30 +59,30 @@ export default async function OverviewPage({
 
   // Get user actions completed
   const { count: actionsCompleted } = await supabase
-    .from("user_actions")
+    .from("VC_user_actions")
     .select("*", { count: "exact", head: true })
-    .eq("enrollment_id", enrollment.id)
-    .eq("completed", true)
+    .eq("user_id", user.id)
+    .eq("program_id", program.id)
 
   // Get streak
   const { data: streak } = await supabase
-    .from("user_streaks")
+    .from("VC_user_streaks")
     .select("current_streak, longest_streak, last_activity_date")
-    .eq("enrollment_id", enrollment.id)
+    .eq("user_id", user.id)
     .maybeSingle()
 
-  // Get today's insight (title + key_theme for the daily quote tile)
+  // Get today's insight (title + theme for the daily quote tile)
   let dailyInsight: { title: string; keyTheme: string } | null = null
-  if (slug === "workforce-ready") {
+  if (slug === "workforce-mindset-21-day") {
     const { data: dayData } = await supabase
-      .from("workforce_mindset_21day")
-      .select("title, key_theme")
+      .from("VC_workforce_mindset_21day")
+      .select("title, theme")
       .eq("day_number", currentDay)
       .maybeSingle()
     if (dayData) {
       dailyInsight = {
         title: dayData.title,
-        keyTheme: dayData.key_theme ?? "",
+        keyTheme: dayData.theme ?? "",
       }
     }
   }
@@ -91,22 +90,22 @@ export default async function OverviewPage({
   return (
     <OverviewClient
       program={{
-        name: program.name,
+        name: program.title,
         slug: program.slug,
         tagline: program.tagline,
-        description: program.short_description,
-        badgeColor: program.color ?? "#00c892",
-        signalAcronym: program.badge ?? "",
-        audience: program.audience,
+        description: program.description,
+        badgeColor: "#00c892",
+        signalAcronym: "",
+        audience: "",
         totalDays,
       }}
       enrollment={{
         currentDay,
         totalDays,
         progress: Math.round((currentDay / totalDays) * 100),
-        startDate: enrollment.started_at,
+        startDate: enrollment.enrolled_at,
         endDate: subscription?.current_period_end ?? null,
-        planTier: subscription?.plan_tier ?? "individual",
+        planTier: subscription?.plan_type ?? "free",
       }}
       stats={{
         actionsCompleted: actionsCompleted ?? 0,

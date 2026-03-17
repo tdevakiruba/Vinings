@@ -32,7 +32,7 @@ export default async function ProgramsPage({
     const supabase = await createClient()
 
     const { data: programsData } = await supabase
-      .from("programs")
+      .from("VC_programs")
       .select("*")
       .eq("is_active", true)
       .order("sort_order")
@@ -40,7 +40,7 @@ export default async function ProgramsPage({
     programs = programsData
 
     const { data: categoriesData } = await supabase
-      .from("categories")
+      .from("VC_categories")
       .select("*")
       .order("sort_order")
 
@@ -50,12 +50,12 @@ export default async function ProgramsPage({
 
     const [{ data: featuresData }, { data: pricingData }] = await Promise.all([
       supabase
-        .from("program_features")
+        .from("VC_program_features")
         .select("*")
         .in("program_id", programIds)
         .order("sort_order"),
       supabase
-        .from("program_pricing")
+        .from("VC_program_pricing")
         .select("*")
         .in("program_id", programIds)
         .order("sort_order"),
