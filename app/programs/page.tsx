@@ -1,19 +1,11 @@
 import { createClient } from "@/lib/supabase/server"
-import Link from "next/link"
-import {
-  CheckCircle2,
-  ChevronRight,
-  Clock,
-  Search,
-  Users,
-} from "lucide-react"
 import type { Metadata } from "next"
 import { ProgramSearch } from "./program-search"
 
 export const metadata: Metadata = {
   title: "Programs",
   description:
-    "Browse all Transformer Hub Institute leadership programs. Filter by category to find the right fit for your journey.",
+    "Browse our professional development programs designed to accelerate your career growth.",
 }
 
 export default async function ProgramsPage({
@@ -69,27 +61,13 @@ export default async function ProgramsPage({
 
   // Client-side filtering is handled in ProgramSearch component
   return (
-    <>
-      {/* Page header */}
-      <section className="border-b bg-wf-bg px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Programs
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Explore our full catalog of leadership development programs.
-          </p>
-        </div>
-      </section>
-
-      <ProgramSearch
-        programs={programs ?? []}
-        categories={categories ?? []}
-        features={features ?? []}
-        pricing={pricing ?? []}
-        initialCategory={category}
-        initialQuery={q}
-      />
-    </>
+    <ProgramSearch
+      programs={programs ?? []}
+      categories={categories ?? []}
+      features={features ?? []}
+      pricing={pricing ?? []}
+      initialCategory={category}
+      initialQuery={q}
+    />
   )
 }
