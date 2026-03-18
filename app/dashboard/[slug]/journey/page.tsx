@@ -59,6 +59,11 @@ export default async function JourneyPage({
     motivational_keynote?: string[] | null
     how_to_implement?: string[] | null
     three_actions?: { action_title: string; instruction: string }[] | null
+    // Worship-specific fields
+    scripture_reference?: string | null
+    scripture_text?: string | null
+    thought?: string | null
+    real_scenario?: string | null
   }[] = []
 
   if (slug === "workforce-mindset-21-day") {
@@ -77,25 +82,21 @@ export default async function JourneyPage({
       )
       .eq("is_active", true)
       .order("day_number")
-    console.log("[v0] Worship lessons fetch:", { lessonCount: lessons?.length, error })
     // Transform worship lessons to match curriculum structure
     curriculum = (lessons ?? []).map((lesson) => ({
       day_number: lesson.day_number,
       title: lesson.title,
       key_theme: lesson.theme,
-      motivational_keynote: lesson.scripture_niv ? [lesson.scripture_niv] : null,
-      how_to_implement: lesson.thought ? [lesson.thought] : null,
+      scripture_reference: lesson.scripture_reference,
+      scripture_text: lesson.scripture_niv,
+      thought: lesson.thought,
+      real_scenario: lesson.real_scenario,
       three_actions: [
         ...(lesson.action_1 ? [{ action_title: "Action 1", instruction: lesson.action_1 }] : []),
         ...(lesson.action_2 ? [{ action_title: "Action 2", instruction: lesson.action_2 }] : []),
         ...(lesson.action_3 ? [{ action_title: "Action 3", instruction: lesson.action_3 }] : []),
-      ].length > 0 ? [
-        ...(lesson.action_1 ? [{ action_title: "Action 1", instruction: lesson.action_1 }] : []),
-        ...(lesson.action_2 ? [{ action_title: "Action 2", instruction: lesson.action_2 }] : []),
-        ...(lesson.action_3 ? [{ action_title: "Action 3", instruction: lesson.action_3 }] : []),
-      ] : null,
+      ],
     }))
-    console.log("[v0] Transformed curriculum:", curriculum)
   }
 
   // Fetch user action progress

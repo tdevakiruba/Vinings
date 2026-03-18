@@ -1,3 +1,4 @@
+// Next.js middleware for auth session handling
 import { updateSession } from '@/lib/supabase/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 
