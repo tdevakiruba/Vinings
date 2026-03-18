@@ -135,6 +135,8 @@ export function WorshipProgramDetail({
             src="/images/programs/worship-hero.jpg"
             alt="Worship gathering"
             fill
+            priority
+            loading="eager"
             className="object-cover opacity-60"
           />
         </div>

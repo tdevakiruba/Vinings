@@ -21,7 +21,7 @@ INSERT INTO public.VC_programs (id, slug, name, tagline, short_description, long
     'Leadership Reboot SIGNAL™ 90-Day Framework',
     '90-Day Leadership Transformation',
     'A 90-day guided system using the SIGNAL™ framework, micro-content, daily reflection, and performance-aligned action to elevate senior executives.',
-    'Transformer Hub Institute SIGNAL™ is a 90-day guided system that uses the SIGNAL™ framework, micro-content, daily reflection, and performance-aligned action to elevate senior executives and top industry leaders. Designed to take the mindset shifts we discover in our workshops and turn them into permanent habits.',
+    'Vinings Church SIGNAL™ is a 90-day guided system that uses the SIGNAL™ framework, micro-content, daily reflection, and performance-aligned action to elevate senior executives and top industry leaders. Designed to take the mindset shifts we discover in our workshops and turn them into permanent habits.',
     'Executive',
     'executive',
     '#0d9488',

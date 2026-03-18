@@ -27,10 +27,7 @@ export function PlatformFooter() {
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-sm font-bold text-foreground">
-                  Transformer Hub
-                </span>
-                <span className="text-[9px] font-semibold tracking-wider text-wf-mint uppercase">
-                  Institute
+                  Vinings Church
                 </span>
               </div>
             </Link>
@@ -64,7 +61,7 @@ export function PlatformFooter() {
 
         <div className="mt-10 border-t pt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Transformer Hub Institute. All
+            &copy; {new Date().getFullYear()} Vinings Church. All
             rights reserved.
           </p>
         </div>

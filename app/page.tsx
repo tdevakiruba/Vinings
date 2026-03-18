@@ -74,7 +74,7 @@ export default async function Home() {
         <div className="relative z-10 mx-auto max-w-5xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-semibold tracking-wider text-white/80 uppercase backdrop-blur-md">
             <Sparkles className="size-4 text-[#00c892]" />
-            Transformer Hub Institute
+            Vinings Church
           </div>
 
           <h1 className="font-serif text-balance text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">

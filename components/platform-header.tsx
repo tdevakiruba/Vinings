@@ -25,10 +25,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-serif text-base font-bold tracking-tight text-foreground">
-              Transformer Hub
-            </span>
-            <span className="text-[11px] font-semibold tracking-wider text-wf-mint uppercase">
-              Institute
+              Vinings Church
             </span>
           </div>
         </Link>
