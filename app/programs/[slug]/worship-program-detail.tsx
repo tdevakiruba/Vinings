@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -60,10 +62,6 @@ const WORSHIP_PHASES = [
     ],
   },
 ]
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 interface WorshipLesson {
   id: number
