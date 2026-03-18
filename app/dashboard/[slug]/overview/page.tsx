@@ -94,7 +94,6 @@ export default async function OverviewPage({
       .from("vc_worship_microlearning_lessons")
       .select("week_number, theme")
       .eq("is_active", true)
-      .distinct()
       .order("week_number")
     phases = weeklyThemes ?? []
   } else {
