@@ -106,7 +106,7 @@ export default async function JourneyPage({
     .eq("user_id", user.id)
     .eq("program_id", program.id)
 
-  // Fetch phases/themes for the current program
+  // Fetch phases/themes for the current program (deduplicated by week)
   let phases: { week_number: number | null; theme: string }[] = []
   
   if (slug === "worship-wins-the-war-21day") {
@@ -115,7 +115,17 @@ export default async function JourneyPage({
       .select("week_number, theme")
       .eq("is_active", true)
       .order("week_number")
-    phases = weeklyThemes ?? []
+    // Deduplicate by week_number to get unique phases
+    const uniquePhases = new Map<number, string>()
+    for (const row of weeklyThemes ?? []) {
+      if (row.week_number && !uniquePhases.has(row.week_number)) {
+        uniquePhases.set(row.week_number, row.theme)
+      }
+    }
+    phases = Array.from(uniquePhases.entries()).map(([week_number, theme]) => ({
+      week_number,
+      theme,
+    }))
   } else {
     // Default phases for workforce program
     phases = [
