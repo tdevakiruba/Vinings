@@ -58,6 +58,13 @@ export default async function FrameworksPage({
       .select("day_number, title, theme")
       .order("day_number")
     curriculum = days ?? []
+  } else if (slug === "worship-wins-the-war-21day") {
+    const { data: lessons } = await supabase
+      .from("vc_worship_microlearning_lessons")
+      .select("day_number, title, theme")
+      .eq("is_active", true)
+      .order("day_number")
+    curriculum = lessons ?? []
   }
 
   // Fetch user action completions per day

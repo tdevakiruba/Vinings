@@ -79,6 +79,7 @@ interface JourneyClientProps {
     action_index: number
     completed: boolean
   }[]
+  phases: { week_number: number | null; theme: string }[]
 }
 
 const programIcons: Record<string, string> = {
@@ -91,7 +92,29 @@ export function JourneyClient({
   currentDay,
   curriculum,
   userActions,
+  phases: providedPhases,
 }: JourneyClientProps) {
+  // Build dynamic phases from curriculum or use provided ones
+  const PHASES = providedPhases && providedPhases.length > 0
+    ? (() => {
+        const dynamicPhases = []
+        const daysPerWeek = program.totalDays / providedPhases.length
+        for (let i = 0; i < providedPhases.length; i++) {
+          const dayStart = i * daysPerWeek + 1
+          const dayEnd = (i + 1) * daysPerWeek
+          dynamicPhases.push({
+            id: `phase-${i}`,
+            label: providedPhases[i].theme || `Phase ${i + 1}`,
+            dayStart: Math.round(dayStart),
+            dayEnd: Math.round(dayEnd),
+            color: ["#00c892", "#0077b6", "#1b2a4a"][i % 3],
+            icon: [Rocket, TrendingUp, Crown][i % 3],
+            tagline: providedPhases[i].theme || `Days ${Math.round(dayStart)}-${Math.round(dayEnd)}`,
+          })
+        }
+        return dynamicPhases
+      })()
+    : PHASES  // fallback to hardcoded
   const [selectedDay, setSelectedDay] = useState(currentDay)
   const [completedActions, setCompletedActions] = useState<Set<string>>(
     new Set(
@@ -566,7 +589,7 @@ export function JourneyClient({
         {todayContent?.three_actions &&
           todayContent.three_actions.length > 0 && (
             <section className="overflow-hidden rounded-2xl border bg-card">
-              <div className="flex items-center justify-between bg-blue-500/5 px-5 py-3.5">
+              <div className="flex items-center justify-between bg-blue-500/5 px-5 py-3">
                 <div className="flex items-center gap-3">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-blue-500 text-white">
                     <Zap className="size-4" />
@@ -580,12 +603,25 @@ export function JourneyClient({
                     </span>
                   </div>
                 </div>
-                <span
-                  className="rounded-full px-3 py-1 text-sm font-bold text-white"
-                  style={{ backgroundColor: activePhase.color }}
-                >
-                  {todayActionsDone}/{todayActionsTotal}
-                </span>
+                <div className="flex items-center gap-3">
+                  <div className="hidden items-center gap-2 sm:flex">
+                    <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${todayActionsTotal > 0 ? (todayActionsDone / todayActionsTotal) * 100 : 0}%`,
+                          backgroundColor: activePhase.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <span
+                    className="rounded-full px-3 py-1 text-sm font-bold text-white whitespace-nowrap"
+                    style={{ backgroundColor: activePhase.color }}
+                  >
+                    {todayActionsDone}/{todayActionsTotal}
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col gap-2.5 p-4">
                 {todayContent.three_actions.map((action, i) => {
