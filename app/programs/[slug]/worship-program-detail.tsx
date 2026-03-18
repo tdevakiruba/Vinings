@@ -153,17 +153,6 @@ export function WorshipProgramDetail({
     router.push(`/signin?redirect=/programs/${program.slug}`)
   }
 
-  // Group lessons by week
-  const weekGroups = curriculum.reduce(
-    (acc, lesson) => {
-      const week = lesson.week_number || 1
-      if (!acc[week]) acc[week] = []
-      acc[week].push(lesson)
-      return acc
-    },
-    {} as Record<number, WorshipLesson[]>
-  )
-
   return (
     <div className="bg-white">
       {/* Hero Section */}
