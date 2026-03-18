@@ -420,48 +420,40 @@ export function ProgramDetail({
 
             {/* CTA row */}
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-              {hasSubscription && (
+              {/* Enrolled: only show Dashboard */}
+              {hasSubscription ? (
                 <Button
                   asChild
                   size="lg"
                   className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
                 >
-                  <Link href={`/dashboard/${program.slug}`}>Go to Dashboard</Link>
+                  <Link href="/dashboard">Dashboard</Link>
                 </Button>
-              )}
-              {!hasSubscription && (
-                <Button
-                  size="lg"
-                  className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
-                  onClick={() =>
-                    document
-                      .getElementById("pricing")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                >
-                  Start Free Trial
-                  <ArrowRight className="ml-2 size-5" />
-                </Button>
-              )}
-              {!isLoggedIn && (
+              ) : (
                 <>
-            <Button
-              asChild
-              size="lg"
-              className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
-            >
-              <Link href={`/dashboard/${program.slug}`}>Go to Dashboard</Link>
-            </Button>
+                  {/* Enroll Now — always visible when not enrolled */}
                   <Button
                     asChild
                     size="lg"
-                    variant="ghost"
-                    className="rounded-xl px-8"
+                    className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
                   >
-                    <Link href="/signup">
-                      Create Account
+                    <Link href={isLoggedIn ? "/dashboard" : "/signup"}>
+                      Enroll Now
+                      <ArrowRight className="ml-2 size-5" />
                     </Link>
                   </Button>
+
+                  {/* Sign In — only when not logged in */}
+                  {!isLoggedIn && (
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="h-14 rounded-xl px-10 text-lg font-bold border-blue-900 text-blue-900 hover:bg-blue-50"
+                    >
+                      <Link href="/signin">Sign In</Link>
+                    </Button>
+                  )}
                 </>
               )}
             </div>
