@@ -72,7 +72,9 @@ export default async function JourneyPage({
   } else if (slug === "worship-wins-the-war-21day") {
     const { data: lessons } = await supabase
       .from("vc_worship_microlearning_lessons")
-      .select("day_number, title, theme")
+      .select(
+        "day_number, title, theme, scripture_reference, scripture_niv, thought, real_scenario, action_1, action_2, action_3"
+      )
       .eq("is_active", true)
       .order("day_number")
     // Transform worship lessons to match curriculum structure
@@ -80,6 +82,17 @@ export default async function JourneyPage({
       day_number: lesson.day_number,
       title: lesson.title,
       key_theme: lesson.theme,
+      motivational_keynote: lesson.scripture_niv ? [lesson.scripture_niv] : null,
+      how_to_implement: lesson.thought ? [lesson.thought] : null,
+      three_actions: [
+        ...(lesson.action_1 ? [{ action_title: "Action 1", instruction: lesson.action_1 }] : []),
+        ...(lesson.action_2 ? [{ action_title: "Action 2", instruction: lesson.action_2 }] : []),
+        ...(lesson.action_3 ? [{ action_title: "Action 3", instruction: lesson.action_3 }] : []),
+      ].length > 0 ? [
+        ...(lesson.action_1 ? [{ action_title: "Action 1", instruction: lesson.action_1 }] : []),
+        ...(lesson.action_2 ? [{ action_title: "Action 2", instruction: lesson.action_2 }] : []),
+        ...(lesson.action_3 ? [{ action_title: "Action 3", instruction: lesson.action_3 }] : []),
+      ] : null,
     }))
   }
 
