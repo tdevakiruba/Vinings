@@ -167,33 +167,40 @@ export function WorshipProgramDetail({
 
             {/* CTAs */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-              <button
-                onClick={handleCTA}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
-              >
-                {hasSubscription ? "Go to Dashboard" : "Start Free Trial"}
-                <ArrowRight className="size-5" />
-              </button>
-              {!hasSubscription && (
+              {hasSubscription ? (
+                /* Enrolled: only show Dashboard */
+                <button
+                  onClick={() => (window.location.href = "/dashboard")}
+                  className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
+                >
+                  Dashboard
+                  <ArrowRight className="size-5" />
+                </button>
+              ) : (
                 <>
+                  {/* Enroll Now */}
                   <button
                     onClick={() =>
                       (window.location.href = isLoggedIn
-                        ? "#"
-                        : `/signin?redirect=/programs/${program.slug}`)
+                        ? "/dashboard"
+                        : `/signup?redirect=/programs/${program.slug}`)
                     }
-                    className="rounded-full border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 transition-all hover:border-blue-600 hover:bg-blue-50"
+                    className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
                   >
-                    {isLoggedIn ? "Sign Out" : "Sign In"}
+                    Enroll Now
+                    <ArrowRight className="size-5" />
                   </button>
-                  <button
-                    onClick={() =>
-                      (window.location.href = `/signup?redirect=/programs/${program.slug}`)
-                    }
-                    className="rounded-full border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 transition-all hover:border-blue-600 hover:bg-blue-50"
-                  >
-                    Create Account
-                  </button>
+                  {/* Sign In — only when not logged in */}
+                  {!isLoggedIn && (
+                    <button
+                      onClick={() =>
+                        (window.location.href = `/signin?redirect=/programs/${program.slug}`)
+                      }
+                      className="rounded-full border-2 border-blue-900 px-6 py-3 font-semibold text-blue-900 transition-all hover:bg-blue-50"
+                    >
+                      Sign In
+                    </button>
+                  )}
                 </>
               )}
             </div>
@@ -469,22 +476,37 @@ export function WorshipProgramDetail({
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section — only show if not enrolled */}
       {!hasSubscription && (
         <section className="px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-8 sm:p-12 text-center text-white">
             <h2 className="mb-4 text-3xl font-bold">Ready to Transform Your Worship?</h2>
             <p className="mb-8 text-lg opacity-90">
-              Join thousands of worship leaders and spiritual seekers on their
-              21-day transformation journey.
+              Join believers on a 21-day journey that shifts worship from a Sunday activity into a daily lifestyle of power.
             </p>
-            <button
-              onClick={handleCTA}
-              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-blue-900 transition-all hover:shadow-lg hover:scale-105"
-            >
-              {hasSubscription ? "Go to Dashboard" : "Start Your Free Trial"}
-              <ArrowRight className="size-5" />
-            </button>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <button
+                onClick={() =>
+                  (window.location.href = isLoggedIn
+                    ? "/dashboard"
+                    : `/signup?redirect=/programs/${program.slug}`)
+                }
+                className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-blue-900 transition-all hover:shadow-lg hover:scale-105"
+              >
+                Enroll Now
+                <ArrowRight className="size-5" />
+              </button>
+              {!isLoggedIn && (
+                <button
+                  onClick={() =>
+                    (window.location.href = `/signin?redirect=/programs/${program.slug}`)
+                  }
+                  className="rounded-full border-2 border-white/60 px-8 py-4 font-bold text-white transition-all hover:bg-white/10"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
           </div>
         </section>
       )}
