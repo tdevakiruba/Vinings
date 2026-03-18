@@ -105,6 +105,17 @@ export function WorshipProgramDetail({
   const [expandedDay, setExpandedDay] = useState<number | null>(null)
   const [enrolling, setEnrolling] = useState(false)
 
+  // Group lessons by week
+  const weekGroups = curriculum.reduce(
+    (acc, lesson) => {
+      const week = lesson.week_number || Math.ceil(lesson.day_number / 7)
+      if (!acc[week]) acc[week] = []
+      acc[week].push(lesson)
+      return acc
+    },
+    {} as Record<number, WorshipLesson[]>
+  )
+
   const handleEnrollNow = async () => {
     if (!isLoggedIn) {
       router.push(`/signin?redirect=/programs/${program.slug}`)
@@ -141,17 +152,6 @@ export function WorshipProgramDetail({
   const handleSignIn = () => {
     router.push(`/signin?redirect=/programs/${program.slug}`)
   }
-
-  // Group lessons by week
-  const weekGroups = curriculum.reduce(
-    (acc, lesson) => {
-      const week = lesson.week_number || 1
-      if (!acc[week]) acc[week] = []
-      acc[week].push(lesson)
-      return acc
-    },
-    {} as Record<number, WorshipLesson[]>
-  )
 
   return (
     <div className="bg-white">
