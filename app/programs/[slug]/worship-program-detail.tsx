@@ -509,21 +509,16 @@ export function WorshipProgramDetail({
             </p>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <button
-                onClick={() =>
-                  (window.location.href = isLoggedIn
-                    ? "/dashboard"
-                    : `/signup?redirect=/programs/${program.slug}`)
-                }
-                className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-blue-900 transition-all hover:shadow-lg hover:scale-105"
+                onClick={handleEnrollNow}
+                disabled={enrolling}
+                className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-blue-900 transition-all hover:shadow-lg hover:scale-105 disabled:opacity-50"
               >
-                Enroll Now
+                {enrolling ? 'Enrolling...' : 'Enroll Now'}
                 <ArrowRight className="size-5" />
               </button>
               {!isLoggedIn && (
                 <button
-                  onClick={() =>
-                    (window.location.href = `/signin?redirect=/programs/${program.slug}`)
-                  }
+                  onClick={handleSignIn}
                   className="rounded-full border-2 border-white/60 px-8 py-4 font-bold text-white transition-all hover:bg-white/10"
                 >
                   Sign In
@@ -534,26 +529,5 @@ export function WorshipProgramDetail({
         </section>
       )}
     </div>
-  )
-}
-
-// Helper component for Users icon
-function Users({ className }: { className: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-    </svg>
   )
 }
