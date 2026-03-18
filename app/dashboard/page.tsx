@@ -70,7 +70,7 @@ export default async function DashboardPage() {
       programSlug: program?.slug ?? "",
       tagline: program?.tagline ?? "",
       audience: "",
-      badgeColor: "#00c892",
+      badgeColor: "#1e3a8a",
       signalAcronym: "",
       currentDay,
       totalDays,
@@ -88,7 +88,15 @@ export default async function DashboardPage() {
     .order("sort_order")
 
   const enrolledIds = new Set(journeys.map((j) => j.programId))
-  const recommended = (allPrograms ?? []).filter((p) => !enrolledIds.has(p.id))
+  const recommended = (allPrograms ?? [])
+    .filter((p) => !enrolledIds.has(p.id))
+    .map((p) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      tagline: p.tagline,
+      duration: p.duration,
+    }))
 
   return (
     <DashboardClient

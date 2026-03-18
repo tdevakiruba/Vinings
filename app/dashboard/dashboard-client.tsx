@@ -30,13 +30,10 @@ interface Journey {
 
 interface RecommendedProgram {
   id: string
-  name: string
+  title: string
   slug: string
   tagline: string | null
   duration: string | null
-  color: string | null
-  badge: string | null
-  audience: string | null
 }
 
 interface DashboardClientProps {
@@ -79,7 +76,7 @@ export function DashboardClient({
           {journeys.length > 0 && (
             <div className="flex items-center gap-4">
               <div className="rounded-xl border bg-card px-4 py-2.5 text-center">
-                <div className="text-lg font-extrabold text-[#00c892]">
+                <div className="text-lg font-extrabold text-blue-900">
                   {journeys.length}
                 </div>
                 <div className="text-[10px] font-medium text-muted-foreground">
@@ -113,7 +110,7 @@ export function DashboardClient({
               {journeys.map((j) => (
                 <div
                   key={j.enrollmentId}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:shadow-[#00c892]/5 hover:border-[#00c892]/30"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:shadow-blue-900/5 hover:border-blue-900/30"
                 >
                   {/* Top accent */}
                   <div
@@ -195,8 +192,7 @@ export function DashboardClient({
               </p>
               <Button
                 asChild
-                className="mt-6 rounded-xl bg-[#00c892] px-6 font-bold text-white hover:bg-[#00c892]/90"
-              >
+                className="mt-6 rounded-xl bg-blue-900 px-6 font-bold text-white hover:bg-blue-800">
                 <Link href="/programs">
                   Explore Programs
                   <ArrowRight className="ml-2 size-4" />
@@ -235,19 +231,15 @@ export function DashboardClient({
                 <Link
                   key={p.id}
                   href={`/programs/${p.slug}`}
-                  className="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-all hover:shadow-md hover:border-[#00c892]/20"
+                  className="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-all hover:shadow-md hover:border-blue-900/20"
                 >
                   <div
-                    className="flex size-11 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white"
-                    style={{
-                      backgroundColor: p.color || "#00c892",
-                    }}
-                  >
-                    {(p.badge || p.name[0]).slice(0, 3)}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white bg-blue-900">
+                    {(p.title[0]).slice(0, 3)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-bold text-card-foreground group-hover:text-[#00c892]">
-                      {p.name}
+                    <h3 className="truncate text-sm font-bold text-card-foreground group-hover:text-blue-900">
+                      {p.title}
                     </h3>
                     <div className="mt-0.5 flex items-center gap-2 text-[11px] text-muted-foreground">
                       {p.duration && (
@@ -256,15 +248,9 @@ export function DashboardClient({
                           {p.duration}
                         </span>
                       )}
-                      {p.audience && (
-                        <span className="flex items-center gap-1">
-                          <Users className="size-3" />
-                          <span className="truncate">{p.audience}</span>
-                        </span>
-                      )}
                     </div>
                   </div>
-                  <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-all group-hover:text-[#00c892]" />
+                  <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-all group-hover:text-blue-900" />
                 </Link>
               ))}
             </div>
