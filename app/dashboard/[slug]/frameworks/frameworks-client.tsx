@@ -4,46 +4,13 @@ import { useState, useMemo } from "react"
 import Link from "next/link"
 import {
   CheckCircle2,
-  Crown,
   Lock,
-  Rocket,
   Search,
   Sparkles,
-  TrendingUp,
   ArrowRight,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-
-/* ── Phase definitions (same as journey + overview) ── */
-const PHASES = [
-  {
-    id: "foundation",
-    label: "Foundation",
-    dayStart: 1,
-    dayEnd: 7,
-    color: "#00c892",
-    icon: Rocket,
-    tagline: "Build your professional identity",
-  },
-  {
-    id: "growth",
-    label: "Growth Strategy",
-    dayStart: 8,
-    dayEnd: 14,
-    color: "#0077b6",
-    icon: TrendingUp,
-    tagline: "Develop core leadership skills",
-  },
-  {
-    id: "mastery",
-    label: "Leadership Mastery",
-    dayStart: 15,
-    dayEnd: 21,
-    color: "#1b2a4a",
-    icon: Crown,
-    tagline: "Lead with influence and trust",
-  },
-]
+import { PROGRAM_PHASES as PHASES } from "@/lib/program-phases"
 
 interface FrameworksClientProps {
   program: {

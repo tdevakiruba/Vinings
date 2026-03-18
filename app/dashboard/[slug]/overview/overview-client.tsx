@@ -8,56 +8,21 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  Crown,
   Flame,
   MapPin,
-  Rocket,
   Sparkles,
   Target,
-  TrendingUp,
   Trophy,
   Zap,
+  Crown,
+  Rocket,
+  TrendingUp,
 } from "lucide-react"
-
-/* ── Phase definitions ── */
-const PHASES = [
-  {
-    id: "foundation",
-    label: "Foundation",
-    dayStart: 1,
-    dayEnd: 7,
-    color: "#00c892",
-    icon: Rocket,
-    tagline: "Build your professional identity",
-  },
-  {
-    id: "growth",
-    label: "Growth Strategy",
-    dayStart: 8,
-    dayEnd: 14,
-    color: "#0077b6",
-    icon: TrendingUp,
-    tagline: "Develop core leadership skills",
-  },
-  {
-    id: "mastery",
-    label: "Leadership Mastery",
-    dayStart: 15,
-    dayEnd: 21,
-    color: "#1b2a4a",
-    icon: Crown,
-    tagline: "Lead with influence and trust",
-  },
-]
+import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
 
 interface Phase {
-  id: string
-  phase_number: number
-  title: string
-  description: string | null
-  day_start: number | null
-  day_end: number | null
-  sort_order: number
+  week_number: number | null
+  theme: string
 }
 
 interface OverviewClientProps {
@@ -101,12 +66,30 @@ export function OverviewClient({
   program,
   enrollment,
   stats,
-  phases,
+  phases: phasesData,
   dailyInsight,
 }: OverviewClientProps) {
   const daysRemaining = enrollment.totalDays - enrollment.currentDay
   const iconSrc = programIcons[program.slug]
   const logoSrc = programLogos[program.slug]
+
+  // Build dynamic PHASES from passed data or fallback to imported constant
+  const PHASES = phasesData && phasesData.length > 0
+    ? (() => {
+        const colors = [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3]
+        const icons = [Rocket, TrendingUp, Crown]
+        const daysPerPhase = Math.ceil(enrollment.totalDays / phasesData.length)
+        return phasesData.map((phase, i) => ({
+          id: `phase-${i}`,
+          label: phase.theme,
+          dayStart: i * daysPerPhase + 1,
+          dayEnd: Math.min((i + 1) * daysPerPhase, enrollment.totalDays),
+          color: colors[i % colors.length],
+          icon: icons[i % icons.length],
+          tagline: `Week ${phase.week_number || i + 1}`,
+        }))
+      })()
+    : PHASES  // fallback to imported hardcoded phases
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -201,19 +184,19 @@ export function OverviewClient({
           icon={<CheckCircle2 className="size-6" />}
           label="Actions Done"
           value={stats.actionsCompleted.toString()}
-          accent="#0077b6"
+          accent={VC_BLUE.phase2}
         />
         <StatCard
           icon={<Flame className="size-6" />}
           label="Current Streak"
           value={`${stats.currentStreak}d`}
-          accent="#f59e0b"
+          accent={VC_BLUE.streak}
         />
         <StatCard
           icon={<Trophy className="size-6" />}
           label="Best Streak"
           value={`${stats.longestStreak}d`}
-          accent="#1b2a4a"
+          accent={VC_BLUE.phase3}
         />
       </div>
 
@@ -304,7 +287,7 @@ export function OverviewClient({
               href={`/dashboard/${program.slug}/frameworks`}
               className="flex items-center gap-4 rounded-xl border p-4 transition-all hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.phase2}18`, color: VC_BLUE.phase2 }}>
                 <BookOpen className="size-5" />
               </div>
               <div>
@@ -321,7 +304,7 @@ export function OverviewClient({
               href={`/dashboard/${program.slug}/certificates`}
               className="flex items-center gap-4 rounded-xl border p-4 transition-all hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.phase3}15`, color: VC_BLUE.phase3 }}>
                 <Trophy className="size-5" />
               </div>
               <div>

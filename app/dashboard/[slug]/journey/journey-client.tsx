@@ -17,37 +17,7 @@ import {
   Crown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-/* ── Phase definitions ── */
-const PHASES = [
-  {
-    id: "foundation",
-    label: "Foundation",
-    dayStart: 1,
-    dayEnd: 7,
-    color: "#00c892",
-    icon: Rocket,
-    tagline: "Build your professional identity",
-  },
-  {
-    id: "growth",
-    label: "Growth Strategy",
-    dayStart: 8,
-    dayEnd: 14,
-    color: "#0077b6",
-    icon: TrendingUp,
-    tagline: "Develop core leadership skills",
-  },
-  {
-    id: "mastery",
-    label: "Leadership Mastery",
-    dayStart: 15,
-    dayEnd: 21,
-    color: "#1b2a4a",
-    icon: Crown,
-    tagline: "Lead with influence and trust",
-  },
-]
+import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
 
 interface CurriculumDay {
   day_number: number
@@ -79,6 +49,7 @@ interface JourneyClientProps {
     action_index: number
     completed: boolean
   }[]
+  phases: { week_number: number | null; theme: string }[]
 }
 
 const programIcons: Record<string, string> = {
@@ -91,7 +62,29 @@ export function JourneyClient({
   currentDay,
   curriculum,
   userActions,
+  phases: providedPhases,
 }: JourneyClientProps) {
+  // Build dynamic phases from curriculum or use provided ones
+  const PHASES = providedPhases && providedPhases.length > 0
+    ? (() => {
+        const dynamicPhases = []
+        const daysPerWeek = program.totalDays / providedPhases.length
+        for (let i = 0; i < providedPhases.length; i++) {
+          const dayStart = i * daysPerWeek + 1
+          const dayEnd = (i + 1) * daysPerWeek
+          dynamicPhases.push({
+            id: `phase-${i}`,
+            label: providedPhases[i].theme || `Phase ${i + 1}`,
+            dayStart: Math.round(dayStart),
+            dayEnd: Math.round(dayEnd),
+            color: [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3, VC_BLUE.accent][i % 4],
+            icon: [Rocket, TrendingUp, Crown][i % 3],
+            tagline: providedPhases[i].theme || `Days ${Math.round(dayStart)}-${Math.round(dayEnd)}`,
+          })
+        }
+        return dynamicPhases
+      })()
+    : PHASES  // fallback to hardcoded
   const [selectedDay, setSelectedDay] = useState(currentDay)
   const [completedActions, setCompletedActions] = useState<Set<string>>(
     new Set(
@@ -369,17 +362,31 @@ export function JourneyClient({
                 <Play className="mr-2 size-4" />
                 {selectedDay === currentDay ? "Start Session" : "View Session"}
               </Button>
-              <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
-                <div className="h-2.5 w-20 overflow-hidden rounded-full bg-white/20">
-                  <div
-                    className="h-full rounded-full bg-white transition-all duration-500"
-                    style={{ width: `${todayProgress}%` }}
-                  />
+              {/* Circular progress ring */}
+              {todayActionsTotal > 0 && (
+                <div className="relative flex size-12 shrink-0 items-center justify-center">
+                  <svg className="size-12 -rotate-90" viewBox="0 0 36 36">
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.2)"
+                      strokeWidth="3"
+                    />
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(todayActionsDone / todayActionsTotal) * 94.25} 94.25`}
+                      className="transition-all duration-500"
+                    />
+                  </svg>
+                  <span className="absolute text-xs font-bold text-white">
+                    {todayActionsDone}/{todayActionsTotal}
+                  </span>
                 </div>
-                <span className="text-sm font-bold text-white">
-                  {todayActionsDone}/{todayActionsTotal}
-                </span>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -566,7 +573,7 @@ export function JourneyClient({
         {todayContent?.three_actions &&
           todayContent.three_actions.length > 0 && (
             <section className="overflow-hidden rounded-2xl border bg-card">
-              <div className="flex items-center justify-between bg-blue-500/5 px-5 py-3.5">
+              <div className="flex items-center justify-between bg-blue-500/5 px-5 py-3">
                 <div className="flex items-center gap-3">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-blue-500 text-white">
                     <Zap className="size-4" />
@@ -580,12 +587,30 @@ export function JourneyClient({
                     </span>
                   </div>
                 </div>
-                <span
-                  className="rounded-full px-3 py-1 text-sm font-bold text-white"
-                  style={{ backgroundColor: activePhase.color }}
-                >
-                  {todayActionsDone}/{todayActionsTotal}
-                </span>
+                {/* Circular progress ring for Act section */}
+                <div className="relative flex size-11 shrink-0 items-center justify-center">
+                  <svg className="size-11 -rotate-90" viewBox="0 0 36 36">
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      className="text-muted"
+                    />
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeDasharray={`${todayActionsTotal > 0 ? (todayActionsDone / todayActionsTotal) * 94.25 : 0} 94.25`}
+                      style={{ stroke: activePhase.color }}
+                      className="transition-all duration-500"
+                    />
+                  </svg>
+                  <span className="absolute text-xs font-bold text-foreground">
+                    {todayActionsDone}/{todayActionsTotal}
+                  </span>
+                </div>
               </div>
               <div className="flex flex-col gap-2.5 p-4">
                 {todayContent.three_actions.map((action, i) => {

@@ -106,6 +106,26 @@ export default async function JourneyPage({
     .eq("user_id", user.id)
     .eq("program_id", program.id)
 
+  // Fetch phases/themes for the current program
+  let phases: { week_number: number | null; theme: string }[] = []
+  
+  if (slug === "worship-wins-the-war-21day") {
+    const { data: weeklyThemes } = await supabase
+      .from("vc_worship_microlearning_lessons")
+      .select("week_number, theme")
+      .eq("is_active", true)
+      .distinct()
+      .order("week_number")
+    phases = weeklyThemes ?? []
+  } else {
+    // Default phases for workforce program
+    phases = [
+      { week_number: 1, theme: "Foundation" },
+      { week_number: 2, theme: "Growth Strategy" },
+      { week_number: 3, theme: "Leadership Mastery" },
+    ]
+  }
+
   return (
     <JourneyClient
       program={{
@@ -119,6 +139,7 @@ export default async function JourneyPage({
       currentDay={currentDay}
       curriculum={curriculum}
       userActions={userActions ?? []}
+      phases={phases}
     />
   )
 }
