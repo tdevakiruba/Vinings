@@ -32,7 +32,7 @@ const PROGRAM_PHASES = [
     label: "Foundation",
     dayStart: 1,
     dayEnd: 7,
-    color: "#00c892",
+    color: "#1e3a8a",
     icon: Rocket,
     tagline: "Build your professional identity",
     highlights: [
@@ -60,7 +60,7 @@ const PROGRAM_PHASES = [
     label: "Leadership Mastery",
     dayStart: 15,
     dayEnd: 21,
-    color: "#a855f7",
+    color: "#1e40af",
     icon: Crown,
     tagline: "Lead with influence and trust",
     highlights: [
@@ -386,7 +386,7 @@ export function ProgramDetail({
 
             {/* Duration badge */}
             <span
-              className="mb-6 inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-base font-bold text-white bg-teal-600"
+              className="mb-6 inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-base font-bold text-white bg-blue-900"
             >
               <Clock className="size-5" />
               {program.duration || "21"}-Day Program
@@ -411,7 +411,7 @@ export function ProgramDetail({
               {features.slice(0, 3).map((f) => (
                 <span
                   key={f.id}
-                  className="rounded-full border-2 border-teal-200 bg-teal-50 px-5 py-2 text-base font-bold text-teal-700"
+                  className="rounded-full border-2 border-blue-200 bg-blue-50 px-5 py-2 text-base font-bold text-blue-900"
                 >
                   {f.feature || f.title}
                 </span>
@@ -424,7 +424,7 @@ export function ProgramDetail({
                 <Button
                   asChild
                   size="lg"
-                  className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-teal-600 hover:bg-teal-700"
+                  className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
                 >
                   <Link href={`/dashboard/${program.slug}`}>Go to Dashboard</Link>
                 </Button>
@@ -432,8 +432,7 @@ export function ProgramDetail({
               {!hasSubscription && (
                 <Button
                   size="lg"
-                  className="h-14 rounded-xl px-10 text-lg font-bold text-white"
-                  style={{ backgroundColor: program.color || "#00c892" }}
+                  className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
                   onClick={() =>
                     document
                       .getElementById("pricing")
@@ -449,7 +448,7 @@ export function ProgramDetail({
             <Button
               asChild
               size="lg"
-              className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-teal-600 hover:bg-teal-700"
+              className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
             >
               <Link href={`/dashboard/${program.slug}`}>Go to Dashboard</Link>
             </Button>
@@ -515,7 +514,7 @@ export function ProgramDetail({
             {/* ── Phase timeline connector ── */}
             <div className="relative mt-10 flex flex-col gap-0">
               {/* Vertical connecting line */}
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#00c892] via-[#3b82f6] to-[#a855f7] sm:left-8" />
+              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#1e3a8a] via-[#3b82f6] to-[#1e40af] sm:left-8" />
 
               {PROGRAM_PHASES.map((phase, phaseIdx) => {
                 const PhaseIcon = phase.icon
@@ -542,10 +541,9 @@ export function ProgramDetail({
                           <h3 className="font-serif text-xl font-extrabold text-foreground sm:text-2xl">
                             {phase.label}
                           </h3>
-                          <span
-                            className="rounded-full px-3 py-0.5 text-xs font-bold text-white"
-                            style={{ backgroundColor: phase.color }}
-                          >
+                    <span
+                      className="rounded-full px-3 py-0.5 text-xs font-bold text-white bg-blue-900"
+                    >
                             Days {phase.dayStart}-{phase.dayEnd}
                           </span>
                         </div>
@@ -632,8 +630,8 @@ export function ProgramDetail({
               <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {features.map((feat) => (
                   <div key={feat.id} className="flex gap-4 rounded-xl border bg-card p-6">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-wf-mint/10">
-                      <CheckCircle2 className="size-5 text-wf-mint" />
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-blue-900/10">
+                      <CheckCircle2 className="size-5 text-blue-900" />
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-card-foreground">
@@ -730,7 +728,7 @@ export function ProgramDetail({
                     key={i}
                     className="flex flex-col rounded-xl border bg-card p-6"
                   >
-                    <Quote className="mb-3 size-6 text-wf-mint/50" />
+                    <Quote className="mb-3 size-6 text-blue-900/50" />
                     <p className="flex-1 text-base leading-relaxed text-foreground/80 italic">
                       {`"${t.text}"`}
                     </p>
@@ -785,7 +783,7 @@ export function ProgramDetail({
                     }`}
                   >
                     {tier.highlighted && (
-                      <span className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-wf-mint/10 px-4 py-1.5 text-xs font-bold text-wf-mint">
+                      <span className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-blue-900/10 px-4 py-1.5 text-xs font-bold text-blue-900">
                         <Star className="size-3.5" /> Recommended
                       </span>
                     )}
@@ -827,7 +825,7 @@ export function ProgramDetail({
                             key={i}
                             className="flex items-start gap-2.5 text-sm text-foreground/70"
                           >
-                            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-wf-mint" />
+                            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-blue-900" />
                             {f}
                           </li>
                         ))}
@@ -836,7 +834,7 @@ export function ProgramDetail({
                     <Button
                       className={`mt-6 w-full rounded-xl ${
                         tier.highlighted
-                          ? "bg-wf-mint text-white hover:bg-wf-mint-light"
+                          ? "bg-blue-900 text-white hover:bg-blue-900-light"
                           : ""
                       }`}
                       variant={tier.highlighted ? "default" : "outline"}
@@ -871,7 +869,7 @@ export function ProgramDetail({
                           {"Don't have an account? "}
                           <Link
                             href="/signup"
-                            className="font-semibold text-wf-mint hover:underline"
+                            className="font-semibold text-blue-900 hover:underline"
                           >
                             Create account
                           </Link>
@@ -1030,7 +1028,7 @@ export function ProgramDetail({
                       key={i}
                       className="flex items-start gap-2 text-xs text-muted-foreground"
                     >
-                      <CheckCircle2 className="mt-0.5 size-3 shrink-0 text-wf-mint" />
+                      <CheckCircle2 className="mt-0.5 size-3 shrink-0 text-blue-900" />
                       {f}
                     </li>
                   ))}
@@ -1038,7 +1036,7 @@ export function ProgramDetail({
               )}
 
               <Button
-                className="mt-5 w-full rounded-xl bg-wf-mint text-white hover:bg-wf-mint-light"
+                className="mt-5 w-full rounded-xl bg-blue-900 text-white hover:bg-blue-900-light"
                 onClick={() => handleEnroll(stickyTier)}
                 disabled={enrollingTier === stickyTier.id}
               >
@@ -1069,7 +1067,7 @@ export function ProgramDetail({
                     {"Don't have an account? "}
                     <Link
                       href={`/signup`}
-                      className="font-semibold text-wf-mint hover:underline"
+                      className="font-semibold text-blue-900 hover:underline"
                     >
                       Sign up free
                     </Link>

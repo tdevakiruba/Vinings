@@ -23,19 +23,19 @@ export function ProgramCard({ program, features, pricing }: ProgramCardProps) {
   return (
     <Link
       href={`/programs/${program.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:shadow-xl hover:shadow-[#00c892]/5 hover:border-[#00c892]/30"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:shadow-xl hover:shadow-[#1e3a8a]/5 hover:border-[#1e3a8a]/30"
     >
       {/* Top accent bar */}
       <div
         className="h-1 w-full"
-        style={{ backgroundColor: program.color || "#00c892" }}
+        style={{ backgroundColor: program.color || "#1e3a8a" }}
       />
 
       <div className="flex flex-1 flex-col p-6">
         <div className="mb-4 flex items-center justify-between">
           <span
             className="rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white"
-            style={{ backgroundColor: program.color || "#00c892" }}
+            style={{ backgroundColor: program.color || "#1e3a8a" }}
           >
             {program.badge || program.name}
           </span>
@@ -45,11 +45,11 @@ export function ProgramCard({ program, features, pricing }: ProgramCardProps) {
           </span>
         </div>
 
-        <h3 className="font-serif text-xl font-bold text-card-foreground transition-colors group-hover:text-[#00c892]">
+        <h3 className="font-serif text-xl font-bold text-card-foreground transition-colors group-hover:text-[#1e3a8a]">
           {program.name}
         </h3>
         {program.tagline && (
-          <p className="mt-1 text-sm font-medium text-[#00c892]">
+          <p className="mt-1 text-sm font-medium text-[#1e3a8a]">
             {program.tagline}
           </p>
         )}
@@ -71,7 +71,7 @@ export function ProgramCard({ program, features, pricing }: ProgramCardProps) {
                 key={feat.id}
                 className="flex items-center gap-2 text-sm text-muted-foreground"
               >
-                <CheckCircle2 className="size-3.5 shrink-0 text-[#00c892]" />
+                <CheckCircle2 className="size-3.5 shrink-0 text-[#1e3a8a]" />
                 {feat.title}
               </div>
             ))}
@@ -98,7 +98,7 @@ export function ProgramCard({ program, features, pricing }: ProgramCardProps) {
               Contact Us
             </span>
           )}
-          <span className="flex items-center gap-1 text-sm font-semibold text-[#00c892] transition-all group-hover:gap-2">
+          <span className="flex items-center gap-1 text-sm font-semibold text-[#1e3a8a] transition-all group-hover:gap-2">
             Learn More
             <ChevronRight className="size-4" />
           </span>

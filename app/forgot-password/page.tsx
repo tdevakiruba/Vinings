@@ -36,10 +36,10 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-wf-bg px-4 py-16">
+      <div className="flex min-h-[60vh] items-center justify-center bg-slate-50 px-4 py-16">
         <div className="w-full max-w-sm text-center">
-          <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-wf-mint/10">
-            <Mail className="size-8 text-wf-mint" />
+          <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-blue-100">
+            <Mail className="size-8 text-blue-900" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Check your email</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
             {"Didn't receive the email? Check your spam folder or "}
             <button
               onClick={() => setSuccess(false)}
-              className="font-medium text-wf-mint hover:underline"
+              className="font-medium text-blue-900 hover:underline"
             >
               try again
             </button>
@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center bg-wf-bg px-4 py-16">
+    <div className="flex min-h-[60vh] items-center justify-center bg-slate-50 px-4 py-16">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-foreground">Reset your password</h1>
@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="mt-5 w-full rounded-xl bg-wf-mint py-5 font-semibold text-white hover:bg-wf-mint-light"
+              className="mt-5 w-full rounded-xl bg-blue-900 py-5 font-semibold text-white hover:bg-blue-800"
             >
               {loading ? <Loader2 className="size-4 animate-spin" /> : "Send Reset Link"}
             </Button>
@@ -109,7 +109,7 @@ export default function ForgotPasswordPage() {
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
             Remember your password?{" "}
-            <Link href="/signin" className="font-medium text-wf-mint hover:underline">
+            <Link href="/signin" className="font-medium text-blue-900 hover:underline">
               Sign In
             </Link>
           </p>

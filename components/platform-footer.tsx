@@ -22,8 +22,8 @@ export function PlatformFooter() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-wf-mint">
-                <TrendingUp className="size-4 text-white" />
+              <div className="flex size-8 items-center justify-center rounded-lg bg-blue-900">
+                <span className="text-xs font-bold text-white">VC</span>
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-sm font-bold text-foreground">

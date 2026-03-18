@@ -172,11 +172,11 @@ function SignInForm() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="mt-5 w-full rounded-xl bg-wf-mint py-5 font-semibold text-white hover:bg-wf-mint-light"
-            >
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-blue-900 py-5 font-semibold text-white hover:bg-blue-800"
+              >
               {loading ? <Loader2 className="size-4 animate-spin" /> : "Sign In"}
             </Button>
           </form>

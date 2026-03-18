@@ -4,7 +4,7 @@ import { DashboardClient } from "./dashboard-client"
 
 export const metadata = {
   title: "Dashboard",
-  description: "Your Transformer Hub Institute learning dashboard",
+  description: "Your Vinings Church learning dashboard",
 }
 
 export default async function DashboardPage() {

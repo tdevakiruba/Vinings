@@ -27,7 +27,7 @@ const WORSHIP_PHASES = [
     name: "Perspective",
     days: "Days 1-7",
     description: "See God as bigger than your circumstances",
-    color: "#10b981", // teal/green
+    color: "#1e3a8a", // ink blue dark
     icon: Eye,
     outcomes: [
       "Shift focus from problems to God's sovereignty",
@@ -39,7 +39,7 @@ const WORSHIP_PHASES = [
     name: "Identity",
     days: "Days 8-14",
     description: "Understand who you are in Christ",
-    color: "#3b82f6", // blue
+    color: "#3b82f6", // ink blue light
     icon: User,
     outcomes: [
       "Anchor your identity in Christ, not circumstances",
@@ -51,7 +51,7 @@ const WORSHIP_PHASES = [
     name: "Warfare",
     days: "Days 15-21",
     description: "Use worship as a spiritual weapon",
-    color: "#8b5cf6", // purple
+    color: "#1e40af", // ink blue medium
     icon: Sword,
     outcomes: [
       "Deploy worship against fear and anxiety",
@@ -149,9 +149,9 @@ export function WorshipProgramDetail({
           {/* Floating Card */}
           <div className="mx-auto w-full max-w-2xl rounded-3xl bg-white/95 backdrop-blur-sm p-8 sm:p-12 shadow-2xl">
             {/* Badge */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-2">
-              <Clock className="size-4 text-teal-600" />
-              <span className="text-sm font-semibold text-teal-600">21 Days</span>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2">
+              <Clock className="size-4 text-blue-900" />
+              <span className="text-sm font-semibold text-blue-900">21 Days</span>
             </div>
 
             {/* Headline */}
@@ -169,7 +169,7 @@ export function WorshipProgramDetail({
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <button
                 onClick={handleCTA}
-                className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-6 py-3 font-semibold text-white transition-all hover:bg-teal-700 hover:shadow-lg"
+                className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
               >
                 {hasSubscription ? "Go to Dashboard" : "Start Free Trial"}
                 <ArrowRight className="size-5" />
@@ -182,7 +182,7 @@ export function WorshipProgramDetail({
                         ? "#"
                         : `/signin?redirect=/programs/${program.slug}`)
                     }
-                    className="rounded-full border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 transition-all hover:border-teal-600 hover:bg-teal-50"
+                    className="rounded-full border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 transition-all hover:border-blue-600 hover:bg-blue-50"
                   >
                     {isLoggedIn ? "Sign Out" : "Sign In"}
                   </button>
@@ -190,7 +190,7 @@ export function WorshipProgramDetail({
                     onClick={() =>
                       (window.location.href = `/signup?redirect=/programs/${program.slug}`)
                     }
-                    className="rounded-full border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 transition-all hover:border-teal-600 hover:bg-teal-50"
+                    className="rounded-full border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 transition-all hover:border-blue-600 hover:bg-blue-50"
                   >
                     Create Account
                   </button>
@@ -232,8 +232,8 @@ export function WorshipProgramDetail({
               const Icon = item.icon
               return (
                 <div key={i} className="rounded-2xl border border-slate-200 p-6">
-                  <div className="mb-4 inline-flex items-center justify-center rounded-full bg-teal-100 p-3">
-                    <Icon className="size-6 text-teal-600" />
+                  <div className="mb-4 inline-flex items-center justify-center rounded-full bg-blue-100 p-3">
+                    <Icon className="size-6 text-blue-900" />
                   </div>
                   <h3 className="mb-2 text-xl font-bold text-slate-900">
                     {item.title}
@@ -348,7 +348,7 @@ export function WorshipProgramDetail({
                   <div key={week}>
                     {/* Week Header */}
                     <div className="mb-4 flex items-center gap-3">
-                      <div className="flex size-10 items-center justify-center rounded-full bg-teal-600 text-white font-bold">
+                      <div className="flex size-10 items-center justify-center rounded-full bg-blue-900 text-white font-bold">
                         W{week}
                       </div>
                       <h3 className="text-lg font-bold text-slate-900">
@@ -368,15 +368,15 @@ export function WorshipProgramDetail({
                                 : lesson.day_number
                             )
                           }
-                          className="text-left rounded-2xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-teal-300 hover:shadow-lg"
+                          className="text-left rounded-2xl border-2 border-slate-200 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-lg"
                         >
                           {/* Day Number */}
                           <div className="mb-3 flex items-center justify-between">
-                            <span className="inline-block rounded-full bg-teal-100 px-3 py-1 text-xs font-bold text-teal-600">
+                            <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-900">
                               Day {lesson.day_number}
                             </span>
                             {expandedDay === lesson.day_number ? (
-                              <Zap className="size-5 text-teal-600" />
+                              <Zap className="size-5 text-blue-900" />
                             ) : (
                               <ArrowRight className="size-5 text-slate-400" />
                             )}
@@ -387,7 +387,7 @@ export function WorshipProgramDetail({
                             {lesson.title}
                           </h4>
                           {lesson.theme && (
-                            <p className="mb-3 text-sm font-medium text-teal-600">
+                            <p className="mb-3 text-sm font-medium text-blue-900">
                               {lesson.theme}
                             </p>
                           )}
@@ -451,7 +451,7 @@ export function WorshipProgramDetail({
                                         key={i}
                                         className="flex items-start gap-2 text-sm text-slate-600"
                                       >
-                                        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-teal-500" />
+                                        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-blue-500" />
                                         {action}
                                       </li>
                                     ))}
@@ -472,7 +472,7 @@ export function WorshipProgramDetail({
       {/* CTA Section */}
       {!hasSubscription && (
         <section className="px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl rounded-2xl bg-gradient-to-br from-teal-600 to-teal-700 p-8 sm:p-12 text-center text-white">
+          <div className="mx-auto max-w-2xl rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-8 sm:p-12 text-center text-white">
             <h2 className="mb-4 text-3xl font-bold">Ready to Transform Your Worship?</h2>
             <p className="mb-8 text-lg opacity-90">
               Join thousands of worship leaders and spiritual seekers on their
@@ -480,7 +480,7 @@ export function WorshipProgramDetail({
             </p>
             <button
               onClick={handleCTA}
-              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-teal-600 transition-all hover:shadow-lg hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-blue-900 transition-all hover:shadow-lg hover:scale-105"
             >
               {hasSubscription ? "Go to Dashboard" : "Start Your Free Trial"}
               <ArrowRight className="size-5" />

@@ -73,13 +73,13 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto max-w-5xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-semibold tracking-wider text-white/80 uppercase backdrop-blur-md">
-            <Sparkles className="size-4 text-[#00c892]" />
+            <Sparkles className="size-4 text-[#1e3a8a]" />
             Vinings Church
           </div>
 
           <h1 className="font-serif text-balance text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Leadership is not taught.{" "}
-            <span className="bg-gradient-to-r from-[#00c892] to-[#00a5ff] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#1e3a8a] to-[#3b82f6] bg-clip-text text-transparent">
               It is built.
             </span>
           </h1>
@@ -94,7 +94,7 @@ export default async function Home() {
             <Button
               asChild
               size="lg"
-              className="rounded-full bg-[#00c892] px-8 py-6 text-base font-bold text-white shadow-lg shadow-[#00c892]/20 transition-all hover:bg-[#00e0a4] hover:shadow-xl hover:shadow-[#00c892]/30"
+              className="rounded-full bg-[#1e3a8a] px-8 py-6 text-base font-bold text-white shadow-lg shadow-[#1e3a8a]/20 transition-all hover:bg-[#1e40af] hover:shadow-xl hover:shadow-[#1e3a8a]/30"
             >
               <Link href="/programs">
                 Explore Programs
