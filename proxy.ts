@@ -1,8 +1,8 @@
-// Next.js middleware for auth session handling
+// Next.js proxy for auth session handling (Next.js 16+)
 import { updateSession } from '@/lib/supabase/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { searchParams, pathname } = request.nextUrl
   
   // If there's an auth code at the root, redirect to the auth callback route
