@@ -285,6 +285,7 @@ export function ProgramDetail({
   // Otherwise render standard program detail
   const router = useRouter()
   const [enrollingTier, setEnrollingTier] = useState<string | null>(null)
+  const [enrollingNow, setEnrollingNow] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   const heroBg = heroBackgrounds[program.slug] || "/images/p1.jpg"
@@ -332,6 +333,39 @@ export function ProgramDetail({
       alert("Something went wrong. Please try again.")
     } finally {
       setEnrollingTier(null)
+    }
+  }
+
+  async function handleEnrollNow() {
+    if (!isLoggedIn) {
+      router.push(`/signin?redirect=/programs/${program.slug}`)
+      return
+    }
+    if (hasSubscription) {
+      router.push(`/dashboard`)
+      return
+    }
+
+    setEnrollingNow(true)
+    try {
+      const res = await fetch("/api/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          programSlug: program.slug,
+          planTier: "individual",
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        alert(err.error || "Enrollment failed")
+        return
+      }
+      router.push(`/dashboard`)
+    } catch {
+      alert("Something went wrong. Please try again.")
+    } finally {
+      setEnrollingNow(false)
     }
   }
 
@@ -433,14 +467,13 @@ export function ProgramDetail({
                 <>
                   {/* Enroll Now — always visible when not enrolled */}
                   <Button
-                    asChild
+                    onClick={handleEnrollNow}
+                    disabled={enrollingNow}
                     size="lg"
-                    className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800"
+                    className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-blue-900 hover:bg-blue-800 disabled:opacity-50"
                   >
-                    <Link href={isLoggedIn ? "/dashboard" : "/signup"}>
-                      Enroll Now
-                      <ArrowRight className="ml-2 size-5" />
-                    </Link>
+                    {enrollingNow ? 'Enrolling...' : 'Enroll Now'}
+                    <ArrowRight className="ml-2 size-5" />
                   </Button>
 
                   {/* Sign In — only when not logged in */}
