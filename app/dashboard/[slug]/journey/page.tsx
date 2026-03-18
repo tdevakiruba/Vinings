@@ -47,14 +47,18 @@ export default async function JourneyPage({
     currentDay = Math.min(Math.max(diffDays + 1, 1), totalDays)
   }
 
-  // Fetch curriculum (for now only workforce-mindset-21-day has content)
+  // Fetch curriculum
   let curriculum: {
     day_number: number
     title: string
-    theme: string | null
-    overview: string | null
-    main_content: string | null
-    exercises: any[] | null
+    theme?: string | null
+    overview?: string | null
+    main_content?: string | null
+    exercises?: any[] | null
+    key_theme?: string | null
+    motivational_keynote?: string[] | null
+    how_to_implement?: string[] | null
+    three_actions?: { action_title: string; instruction: string }[] | null
   }[] = []
 
   if (slug === "workforce-mindset-21-day") {
@@ -65,6 +69,18 @@ export default async function JourneyPage({
       )
       .order("day_number")
     curriculum = days ?? []
+  } else if (slug === "worship-wins-the-war-21day") {
+    const { data: lessons } = await supabase
+      .from("vc_worship_microlearning_lessons")
+      .select("day_number, title, theme")
+      .eq("is_active", true)
+      .order("day_number")
+    // Transform worship lessons to match curriculum structure
+    curriculum = (lessons ?? []).map((lesson) => ({
+      day_number: lesson.day_number,
+      title: lesson.title,
+      key_theme: lesson.theme,
+    }))
   }
 
   // Fetch user action progress
