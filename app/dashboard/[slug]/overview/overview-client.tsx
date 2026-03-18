@@ -78,15 +78,15 @@ export function OverviewClient({
     ? (() => {
         const colors = [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3]
         const icons = [Rocket, TrendingUp, Crown]
-        const daysPerPhase = Math.ceil(enrollment.totalDays / phasesData.length)
+        const daysPerPhase = phasesData.length > 0 ? Math.ceil(enrollment.totalDays / phasesData.length) : 7
         return phasesData.map((phase, i) => ({
           id: `phase-${i}`,
-          label: phase.theme,
+          label: phase.theme || `Phase ${i + 1}`,
           dayStart: i * daysPerPhase + 1,
           dayEnd: Math.min((i + 1) * daysPerPhase, enrollment.totalDays),
           color: colors[i % colors.length],
           icon: icons[i % icons.length],
-          tagline: `Week ${phase.week_number || i + 1}`,
+          tagline: phase.week_number ? `Week ${phase.week_number}` : `Days ${i * daysPerPhase + 1}-${Math.min((i + 1) * daysPerPhase, enrollment.totalDays)}`,
         }))
       })()
     : HARDCODED_PHASES
