@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import {
   CheckCircle2,
   ChevronRight,
@@ -104,7 +104,7 @@ export function ProgramSearch({
       <section className="border-b px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           {activeCategory && activeCategory !== "all" && featuredCategory && (
-            <p className="mb-3 text-sm font-semibold tracking-wide text-teal-600 uppercase">
+            <p className="mb-3 text-sm font-semibold tracking-wide text-blue-900 uppercase">
               {featuredCategory.label}
             </p>
           )}
@@ -160,8 +160,8 @@ export function ProgramSearch({
               onClick={() => handleCategoryClick("all")}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 activeCategory === "all"
-                  ? "bg-teal-600 text-white shadow-lg"
-                  : "border border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50"
+                  ? "bg-blue-900 text-white shadow-lg"
+                  : "border border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50"
               }`}
             >
               All Programs
@@ -172,8 +172,8 @@ export function ProgramSearch({
                 onClick={() => handleCategoryClick(cat.slug)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                   activeCategory === cat.slug
-                    ? "bg-teal-600 text-white shadow-lg"
-                    : "border border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50"
+                    ? "bg-blue-900 text-white shadow-lg"
+                    : "border border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50"
                 }`}
               >
                 {cat.label}
@@ -205,25 +205,25 @@ export function ProgramSearch({
                 const pPricing = pricing.filter(
                   (p) => p.program_id === program.id
                 )
-                const basePrice = pPricing.find(p => p.price_cents)
+                const basePrice = pPricing.find((p) => p.price_cents)
 
                 return (
                   <Link
                     key={program.id}
                     href={`/programs/${program.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:border-teal-300 hover:shadow-xl"
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/5"
                   >
                     {/* Top Accent Border */}
-                    <div className="h-1 bg-gradient-to-r from-teal-500 to-teal-400" />
+                    <div className="h-1 bg-blue-900" />
 
                     <div className="flex flex-col p-6">
                       {/* Header: Badge + Duration */}
                       <div className="mb-4 flex items-center justify-between">
-                        <span className="inline-block rounded-full bg-teal-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                        <span className="inline-block rounded-full bg-blue-900 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
                           {program.title.split(" ")[0]}-Badge
                         </span>
                         {program.duration && (
-                          <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
                             <Clock className="size-3.5" />
                             {program.duration}
                           </span>
@@ -231,18 +231,18 @@ export function ProgramSearch({
                       </div>
 
                       {/* Title + Tagline */}
-                      <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-teal-600">
+                      <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-blue-900">
                         {program.title}
                       </h3>
                       {program.tagline && (
-                        <p className="mt-1 text-sm font-medium text-teal-600">
+                        <p className="mt-1 text-sm font-semibold text-blue-900">
                           {program.tagline}
                         </p>
                       )}
 
                       {/* Description */}
                       {program.description && (
-                        <p className="mt-3 text-sm leading-relaxed text-slate-600 line-clamp-2">
+                        <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
                           {program.description}
                         </p>
                       )}
@@ -255,31 +255,27 @@ export function ProgramSearch({
                               key={feat.id}
                               className="flex items-start gap-2.5 text-sm text-slate-700"
                             >
-                              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-teal-500" />
+                              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-blue-700" />
                               <span>{feat.feature}</span>
                             </div>
                           ))}
-                          {features.filter((f) => f.program_id === program.id)
-                            .length > 3 && (
-                            <p className="text-xs font-medium text-slate-500 mt-1">
-                              +
-                              {
-                                features.filter(
-                                  (f) => f.program_id === program.id
-                                ).length - 3
-                              }{" "}
-                              more features
+                          {features.filter((f) => f.program_id === program.id).length > 3 && (
+                            <p className="mt-1 text-xs font-medium text-slate-500">
+                              +{features.filter((f) => f.program_id === program.id).length - 3} more features
                             </p>
                           )}
                         </div>
                       )}
 
-                      {/* Footer: CTA */}
+                      {/* Footer: Contact Us + Learn More */}
                       <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                        <span className="text-sm font-medium text-slate-600">
-                          Learn More
+                        <span className="text-sm text-slate-500">
+                          Contact Us
                         </span>
-                        <ChevronRight className="size-5 text-teal-600 transition-transform group-hover:translate-x-1" />
+                        <span className="flex items-center gap-1 text-sm font-bold text-blue-900 transition-all group-hover:gap-2">
+                          Learn More
+                          <ChevronRight className="size-4" />
+                        </span>
                       </div>
                     </div>
                   </Link>
