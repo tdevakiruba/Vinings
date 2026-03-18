@@ -70,13 +70,14 @@ export default async function JourneyPage({
       .order("day_number")
     curriculum = days ?? []
   } else if (slug === "worship-wins-the-war-21day") {
-    const { data: lessons } = await supabase
+    const { data: lessons, error } = await supabase
       .from("vc_worship_microlearning_lessons")
       .select(
         "day_number, title, theme, scripture_reference, scripture_niv, thought, real_scenario, action_1, action_2, action_3"
       )
       .eq("is_active", true)
       .order("day_number")
+    console.log("[v0] Worship lessons fetch:", { lessonCount: lessons?.length, error })
     // Transform worship lessons to match curriculum structure
     curriculum = (lessons ?? []).map((lesson) => ({
       day_number: lesson.day_number,
@@ -94,6 +95,7 @@ export default async function JourneyPage({
         ...(lesson.action_3 ? [{ action_title: "Action 3", instruction: lesson.action_3 }] : []),
       ] : null,
     }))
+    console.log("[v0] Transformed curriculum:", curriculum)
   }
 
   // Fetch user action progress
