@@ -105,14 +105,17 @@ export default async function ProgramPage({
     }
   }
 
-  // Fetch curriculum titles only (no full content - that's gated behind subscription)
-  let curriculum: {
-    day_number: number
-    title: string
-    theme: string | null
-  }[] = []
+  // Fetch curriculum - check if this is the worship program
+  let curriculum: any[] = []
 
-  if (slug === "workforce-mindset-21-day") {
+  if (slug === "worship-microlearning-21-day") {
+    const { data: lessons } = await supabase
+      .from("vc_worship_microlearning_lessons")
+      .select("*")
+      .eq("is_active", true)
+      .order("day_number")
+    curriculum = lessons ?? []
+  } else if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
       .from("vc_workforce_mindset_21day")
       .select("day_number, title, theme")

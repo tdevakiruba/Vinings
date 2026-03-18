@@ -22,6 +22,7 @@ import {
   Users,
   Zap,
 } from "lucide-react"
+import { WorshipProgramDetail } from "./worship-program-detail"
 
 /* ── 3-Phase definitions ── */
 const PROGRAM_PHASES = [
@@ -127,6 +128,7 @@ interface CurriculumDay {
 /* ── Static hero map ── */
 const heroBackgrounds: Record<string, string> = {
   "workforce-ready": "/images/p1.jpg",
+  "worship-microlearning-21-day": "/images/programs/worship-hero.jpg",
 }
 const heroIcons: Record<string, string> = {
   "workforce-ready": "/images/workforce-icon.png",
@@ -198,6 +200,23 @@ const testimonialsBySlug: Record<
       text: "The peer community was amazing. Having other young leaders to grow with made the experience so much richer.",
     },
   ],
+  "worship-microlearning-21-day": [
+    {
+      name: "Pastor Michael Brown",
+      role: "Senior Pastor",
+      text: "This program transformed how I approach worship leadership. The daily micron actions have deepened my spiritual practice and strengthened our congregation.",
+    },
+    {
+      name: "Grace Chen",
+      role: "Worship Leader",
+      text: "The scripture integration and practical frameworks have elevated our worship services. I've seen real spiritual transformation in our team.",
+    },
+    {
+      name: "James Williams",
+      role: "Church Member",
+      text: "The 21-day journey shifted my entire perspective on worship. It's no longer just a Sunday activity—it's become a lifestyle.",
+    },
+  ],
 }
 
 /* ── FAQ (generic + per-program, easily editable) ── */
@@ -254,6 +273,17 @@ export function ProgramDetail({
   isLoggedIn: boolean
   hasSubscription: boolean
 }) {
+  // If this is the worship program, render the specialized component
+  if (program.slug === "worship-microlearning-21-day" && curriculum.length > 0) {
+    return (
+      <WorshipProgramDetail
+        program={program}
+        curriculum={curriculum as any}
+        isLoggedIn={isLoggedIn}
+        hasSubscription={hasSubscription}
+      />
+    )
+  }
   const router = useRouter()
   const [enrollingTier, setEnrollingTier] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
