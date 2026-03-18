@@ -343,10 +343,10 @@ export function FrameworksClient({
                       <h4 className="text-sm font-bold leading-tight text-foreground line-clamp-2">
                         {day.title}
                       </h4>
-                  {day.theme && (
-                    <span className="text-xs text-muted-foreground">
-                      {day.theme}
-                        </p>
+                      {day.theme && (
+                        <span className="text-xs text-muted-foreground">
+                          {day.theme}
+                        </span>
                       )}
                       {isCurrent && (
                         <span
