@@ -168,7 +168,7 @@ export function OverviewClient({
           icon={<CheckCircle2 className="size-6" />}
           label="Actions Done"
           value={stats.actionsCompleted.toString()}
-          accent={VC_BLUE.accent}
+          accent={VC_BLUE.phase2}
         />
         <StatCard
           icon={<Flame className="size-6" />}
@@ -180,7 +180,7 @@ export function OverviewClient({
           icon={<Trophy className="size-6" />}
           label="Best Streak"
           value={`${stats.longestStreak}d`}
-          accent={VC_BLUE.phase1}
+          accent={VC_BLUE.phase3}
         />
       </div>
 
@@ -271,7 +271,7 @@ export function OverviewClient({
               href={`/dashboard/${program.slug}/frameworks`}
               className="flex items-center gap-4 rounded-xl border p-4 transition-all hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.accent}15`, color: VC_BLUE.accent }}>
+              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.phase2}18`, color: VC_BLUE.phase2 }}>
                 <BookOpen className="size-5" />
               </div>
               <div>
@@ -288,7 +288,7 @@ export function OverviewClient({
               href={`/dashboard/${program.slug}/certificates`}
               className="flex items-center gap-4 rounded-xl border p-4 transition-all hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.phase1}15`, color: VC_BLUE.phase1 }}>
+              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.phase3}15`, color: VC_BLUE.phase3 }}>
                 <Trophy className="size-5" />
               </div>
               <div>

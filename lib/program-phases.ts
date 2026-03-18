@@ -1,16 +1,22 @@
 import { Rocket, TrendingUp, Crown } from "lucide-react"
 
 /**
- * Vinings ink-blue color palette used consistently across
- * overview, journey, and frameworks pages.
+ * Vinings brand palette — ink blue + mint green + ink dark.
+ * Used consistently across overview, journey, and frameworks pages.
+ *
+ *  phase1  → ink blue    #1b3a6b  (deep navy — Phase 1 / Foundation)
+ *  phase2  → mint green  #3ecf8e  (fresh mint — Phase 2 / Growth)
+ *  phase3  → ink dark    #0f172a  (near-black — Phase 3 / Mastery)
+ *  accent  → sky blue    #2563eb  (CTA highlights)
+ *  streak  → amber       #f59e0b  (streak/fire)
  */
 export const VC_BLUE = {
-  phase1: "#1e3a8a",   // ink blue (deep navy)
-  phase2: "#2563eb",   // mid blue
-  phase3: "#0f172a",   // ink dark
-  accent:  "#1d4ed8",  // action blue
+  phase1: "#1b3a6b",   // ink blue — deep navy
+  phase2: "#3ecf8e",   // mint green — fresh accent
+  phase3: "#0f172a",   // ink dark — near black
+  accent:  "#2563eb",  // sky blue — CTA / action
   streak:  "#f59e0b",  // amber — streak only
-  trophy:  "#1e3a8a",  // ink blue reuse
+  trophy:  "#1b3a6b",  // ink blue reuse
 } as const
 
 export const PROGRAM_PHASES = [
@@ -19,7 +25,7 @@ export const PROGRAM_PHASES = [
     label: "Foundation",
     dayStart: 1,
     dayEnd: 7,
-    color: VC_BLUE.phase1,
+    color: VC_BLUE.phase1,   // ink blue
     icon: Rocket,
     tagline: "Build your professional identity",
   },
@@ -28,7 +34,7 @@ export const PROGRAM_PHASES = [
     label: "Growth Strategy",
     dayStart: 8,
     dayEnd: 14,
-    color: VC_BLUE.phase2,
+    color: VC_BLUE.phase2,   // mint green
     icon: TrendingUp,
     tagline: "Develop core leadership skills",
   },
@@ -37,7 +43,7 @@ export const PROGRAM_PHASES = [
     label: "Leadership Mastery",
     dayStart: 15,
     dayEnd: 21,
-    color: VC_BLUE.phase3,
+    color: VC_BLUE.phase3,   // ink dark
     icon: Crown,
     tagline: "Lead with influence and trust",
   },

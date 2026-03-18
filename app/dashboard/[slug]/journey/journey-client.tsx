@@ -77,7 +77,7 @@ export function JourneyClient({
             label: providedPhases[i].theme || `Phase ${i + 1}`,
             dayStart: Math.round(dayStart),
             dayEnd: Math.round(dayEnd),
-            color: [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3][i % 3],
+            color: [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3, VC_BLUE.accent][i % 4],
             icon: [Rocket, TrendingUp, Crown][i % 3],
             tagline: providedPhases[i].theme || `Days ${Math.round(dayStart)}-${Math.round(dayEnd)}`,
           })
