@@ -60,7 +60,10 @@ const WORSHIP_PHASES = [
     ],
   },
 ]
-import { useState } from "react"
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface WorshipLesson {
   id: number
@@ -100,18 +103,45 @@ export function WorshipProgramDetail({
   isLoggedIn,
   hasSubscription,
 }: WorshipProgramDetailProps) {
+  const router = useRouter()
   const [expandedDay, setExpandedDay] = useState<number | null>(null)
+  const [enrolling, setEnrolling] = useState(false)
 
-  const handleCTA = () => {
+  const handleEnrollNow = async () => {
     if (!isLoggedIn) {
-      window.location.href = `/signin?redirect=/programs/${program.slug}`
+      router.push(`/signin?redirect=/programs/${program.slug}`)
       return
     }
     if (hasSubscription) {
-      window.location.href = `/dashboard/${program.slug}`
+      router.push(`/dashboard`)
       return
     }
-    window.location.href = `#pricing`
+
+    setEnrolling(true)
+    try {
+      const res = await fetch("/api/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          programSlug: program.slug,
+          planTier: "individual",
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        alert(err.error || "Enrollment failed")
+        return
+      }
+      router.push(`/dashboard`)
+    } catch {
+      alert("Something went wrong. Please try again.")
+    } finally {
+      setEnrolling(false)
+    }
+  }
+
+  const handleSignIn = () => {
+    router.push(`/signin?redirect=/programs/${program.slug}`)
   }
 
   // Group lessons by week
@@ -170,7 +200,7 @@ export function WorshipProgramDetail({
               {hasSubscription ? (
                 /* Enrolled: only show Dashboard */
                 <button
-                  onClick={() => (window.location.href = "/dashboard")}
+                  onClick={() => router.push("/dashboard")}
                   className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
                 >
                   Dashboard
@@ -180,22 +210,17 @@ export function WorshipProgramDetail({
                 <>
                   {/* Enroll Now */}
                   <button
-                    onClick={() =>
-                      (window.location.href = isLoggedIn
-                        ? "/dashboard"
-                        : `/signup?redirect=/programs/${program.slug}`)
-                    }
-                    className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg"
+                    onClick={handleEnrollNow}
+                    disabled={enrolling}
+                    className="inline-flex items-center gap-2 rounded-full bg-blue-900 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg disabled:opacity-50"
                   >
-                    Enroll Now
+                    {enrolling ? 'Enrolling...' : 'Enroll Now'}
                     <ArrowRight className="size-5" />
                   </button>
                   {/* Sign In — only when not logged in */}
                   {!isLoggedIn && (
                     <button
-                      onClick={() =>
-                        (window.location.href = `/signin?redirect=/programs/${program.slug}`)
-                      }
+                      onClick={handleSignIn}
                       className="rounded-full border-2 border-blue-900 px-6 py-3 font-semibold text-blue-900 transition-all hover:bg-blue-50"
                     >
                       Sign In
