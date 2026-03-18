@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,15 +8,11 @@ import {
   CheckCircle2,
   Lightbulb,
   Zap,
-  Play,
-  Lock,
   Sparkles,
-  Rocket,
-  TrendingUp,
-  Crown,
+  ChevronDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
+import { VC_BLUE } from "@/lib/program-phases"
 
 interface CurriculumDay {
   day_number: number
@@ -26,7 +21,6 @@ interface CurriculumDay {
   motivational_keynote?: string[] | null
   how_to_implement?: string[] | null
   three_actions: { action_title: string; instruction: string }[] | null
-  // Worship-specific fields
   scripture_reference?: string | null
   scripture_text?: string | null
   thought?: string | null
@@ -52,10 +46,6 @@ interface JourneyClientProps {
   phases: { week_number: number | null; theme: string }[]
 }
 
-const programIcons: Record<string, string> = {
-  "workforce-ready": "/images/workforce-icon.png",
-}
-
 export function JourneyClient({
   program,
   enrollmentId,
@@ -64,27 +54,6 @@ export function JourneyClient({
   userActions,
   phases: providedPhases,
 }: JourneyClientProps) {
-  // Build dynamic phases from curriculum or use provided ones
-  const PHASES = providedPhases && providedPhases.length > 0
-    ? (() => {
-        const dynamicPhases = []
-        const daysPerWeek = program.totalDays / providedPhases.length
-        for (let i = 0; i < providedPhases.length; i++) {
-          const dayStart = i * daysPerWeek + 1
-          const dayEnd = (i + 1) * daysPerWeek
-          dynamicPhases.push({
-            id: `phase-${i}`,
-            label: providedPhases[i].theme || `Phase ${i + 1}`,
-            dayStart: Math.round(dayStart),
-            dayEnd: Math.round(dayEnd),
-            color: [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3, VC_BLUE.accent][i % 4],
-            icon: [Rocket, TrendingUp, Crown][i % 3],
-            tagline: providedPhases[i].theme || `Days ${Math.round(dayStart)}-${Math.round(dayEnd)}`,
-          })
-        }
-        return dynamicPhases
-      })()
-    : PHASES  // fallback to hardcoded
   const [selectedDay, setSelectedDay] = useState(currentDay)
   const [completedActions, setCompletedActions] = useState<Set<string>>(
     new Set(
@@ -94,16 +63,14 @@ export function JourneyClient({
     )
   )
   const [saving, setSaving] = useState(false)
-  const [expandedPhase, setExpandedPhase] = useState<string | null>(
-    PHASES.find((p) => selectedDay >= p.dayStart && selectedDay <= p.dayEnd)
-      ?.id ?? "foundation"
-  )
+  const [showDayPicker, setShowDayPicker] = useState(false)
 
   const todayContent = curriculum.find((d) => d.day_number === selectedDay)
-  const activePhase =
-    PHASES.find((p) => selectedDay >= p.dayStart && selectedDay <= p.dayEnd) ??
-    PHASES[0]
-  const iconSrc = programIcons[program.slug]
+  
+  // Get current week/phase
+  const currentWeek = Math.ceil(selectedDay / 7)
+  const currentPhase = providedPhases.find((p) => p.week_number === currentWeek) || providedPhases[0]
+  const phaseColor = [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3][currentWeek - 1] || VC_BLUE.phase1
 
   async function toggleAction(dayNum: number, actionIdx: number) {
     const key = `${dayNum}-${actionIdx}`
@@ -144,310 +111,189 @@ export function JourneyClient({
       ? Math.round((todayActionsDone / todayActionsTotal) * 100)
       : 0
 
-  function isDayCompleted(day: number) {
-    const content = curriculum.find((d) => d.day_number === day)
-    return (
-      content?.three_actions?.every((_, i) =>
-        completedActions.has(`${day}-${i}`)
-      ) ?? false
-    )
-  }
+  // Calculate overall progress
+  const totalActions = curriculum.reduce((sum, day) => sum + (day.three_actions?.length ?? 0), 0)
+  const totalCompleted = completedActions.size
+  const overallProgress = totalActions > 0 ? Math.round((totalCompleted / totalActions) * 100) : 0
 
   return (
-    <div className="mx-auto max-w-4xl space-y-5">
-      {/* ── Phase-Grouped Day Navigator ── */}
-      <div className="space-y-3">
-        {PHASES.map((phase) => {
-          const PhaseIcon = phase.icon
-          const isExpanded = expandedPhase === phase.id
-          const days = Array.from(
-            { length: phase.dayEnd - phase.dayStart + 1 },
-            (_, i) => phase.dayStart + i
-          )
-          const phaseDaysCompleted = days.filter((d) => isDayCompleted(d)).length
-          const phaseProgress = Math.round(
-            (phaseDaysCompleted / days.length) * 100
-          )
-          const isCurrentPhase =
-            currentDay >= phase.dayStart && currentDay <= phase.dayEnd
-          const isPastPhase = currentDay > phase.dayEnd
-          const isFuturePhase = currentDay < phase.dayStart
-
-          return (
-            <div
-              key={phase.id}
-              className="overflow-hidden rounded-2xl border-2 transition-all"
-              style={{
-                borderColor: isCurrentPhase
-                  ? phase.color
-                  : isPastPhase
-                  ? `${phase.color}30`
-                  : "transparent",
-                backgroundColor: isCurrentPhase
-                  ? `${phase.color}04`
-                  : undefined,
-              }}
-            >
-              {/* Phase header - clickable */}
-              <button
-                onClick={() =>
-                  setExpandedPhase(isExpanded ? null : phase.id)
-                }
-                className="flex w-full items-center gap-4 p-4 text-left transition-colors hover:bg-muted/30"
-              >
-                <div
-                  className="flex size-11 shrink-0 items-center justify-center rounded-xl text-white"
-                  style={{ backgroundColor: phase.color }}
-                >
-                  <PhaseIcon className="size-5" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-extrabold text-foreground">
-                      {phase.label}
-                    </h3>
-                    {isCurrentPhase && (
-                      <span
-                        className="rounded-full px-2.5 py-0.5 text-[11px] font-bold text-white"
-                        style={{ backgroundColor: phase.color }}
-                      >
-                        Current
-                      </span>
-                    )}
-                    {isPastPhase && (
-                      <CheckCircle2
-                        className="size-5"
-                        style={{ color: phase.color }}
-                      />
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {phase.tagline} &middot; Days {phase.dayStart}-{phase.dayEnd}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="hidden items-center gap-2 sm:flex">
-                    <div className="h-2 w-16 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${phaseProgress}%`,
-                          backgroundColor: phase.color,
-                        }}
-                      />
-                    </div>
-                    <span
-                      className="text-xs font-bold"
-                      style={{ color: phase.color }}
-                    >
-                      {phaseProgress}%
-                    </span>
-                  </div>
-                  <ArrowRight
-                    className={`size-5 text-muted-foreground transition-transform ${
-                      isExpanded ? "rotate-90" : ""
-                    }`}
-                  />
-                </div>
-              </button>
-
-              {/* Expanded day grid */}
-              {isExpanded && (
-                <div className="border-t px-4 pb-4 pt-3">
-                  <div className="flex flex-wrap gap-2">
-                    {days.map((day) => {
-                      const isSelected = day === selectedDay
-                      const isCurrent = day === currentDay
-                      const isLocked = day > currentDay
-                      const completed = isDayCompleted(day)
-                      const dayTitle =
-                        curriculum.find((d) => d.day_number === day)?.title ?? ""
-
-                      return (
-                        <button
-                          key={day}
-                          onClick={() => !isLocked && setSelectedDay(day)}
-                          disabled={isLocked}
-                          title={isLocked ? "Locked" : dayTitle}
-                          className={`group relative flex h-12 items-center gap-2 rounded-xl px-3.5 text-sm font-bold transition-all ${
-                            isSelected
-                              ? "text-white shadow-lg"
-                              : completed
-                              ? "border-2 bg-card hover:shadow-md"
-                              : isLocked
-                              ? "bg-muted/60 text-muted-foreground/30"
-                              : isCurrent
-                              ? "border-2 bg-card shadow-md"
-                              : "border bg-card text-foreground hover:shadow-md"
-                          }`}
-                          style={
-                            isSelected
-                              ? { backgroundColor: phase.color }
-                              : completed
-                              ? {
-                                  borderColor: `${phase.color}40`,
-                                  color: phase.color,
-                                }
-                              : isCurrent
-                              ? { borderColor: phase.color }
-                              : undefined
-                          }
-                        >
-                          {isLocked ? (
-                            <Lock className="size-3.5" />
-                          ) : completed && !isSelected ? (
-                            <CheckCircle2 className="size-4" />
-                          ) : null}
-                          <span>Day {day}</span>
-                          {isCurrent && !isSelected && (
-                            <span
-                              className="absolute -right-1 -top-1 size-3 rounded-full border-2 border-card"
-                              style={{ backgroundColor: phase.color }}
-                            />
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        })}
+    <div className="relative mx-auto max-w-3xl">
+      {/* Sticky Progress Indicator - Top Right */}
+      <div className="fixed right-4 top-20 z-50 hidden lg:block">
+        <div className="flex flex-col items-center gap-2 rounded-2xl border bg-card p-3 shadow-lg">
+          {/* Circular progress ring */}
+          <div className="relative flex size-16 items-center justify-center">
+            <svg className="size-16 -rotate-90" viewBox="0 0 36 36">
+              <circle
+                cx="18" cy="18" r="15"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className="text-muted"
+              />
+              <circle
+                cx="18" cy="18" r="15"
+                fill="none"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeDasharray={`${todayProgress * 0.9425} 94.25`}
+                style={{ stroke: phaseColor }}
+                className="transition-all duration-500"
+              />
+            </svg>
+            <span className="absolute text-sm font-bold" style={{ color: phaseColor }}>
+              {todayActionsDone}/{todayActionsTotal}
+            </span>
+          </div>
+          <span className="text-[10px] font-medium text-muted-foreground">Today</span>
+          <div className="h-px w-full bg-border" />
+          <span className="text-xs font-semibold text-foreground">Day {selectedDay}</span>
+          <span className="text-[10px] text-muted-foreground">of {program.totalDays}</span>
+        </div>
       </div>
 
-      {/* ── Active Day Hero Card ── */}
-      <div
-        className="overflow-hidden rounded-2xl"
-        style={{ backgroundColor: activePhase.color }}
-      >
-        <div className="relative p-5 sm:p-6">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3">
-              {iconSrc && (
-                <Image
-                  src={iconSrc}
-                  alt=""
-                  width={40}
-                  height={40}
-                  className="shrink-0 drop-shadow-lg"
-                />
-              )}
-              <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-white/70">
-                  {activePhase.label} &middot; Day {selectedDay}
-                </span>
-                <h2 className="text-xl font-extrabold text-white sm:text-2xl">
-                  {todayContent?.title ?? `Day ${selectedDay}`}
-                </h2>
-              </div>
-            </div>
-            {todayContent?.key_theme && (
-              <p className="mt-2 text-base text-white/80">
-                {todayContent.key_theme}
-              </p>
-            )}
-            <div className="mt-4 flex items-center gap-3">
-              <Button
-                size="lg"
-                className="rounded-xl bg-white px-5 font-bold shadow-lg hover:bg-white/90"
-                style={{ color: activePhase.color }}
-                onClick={() =>
-                  document
-                    .getElementById("session-content")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+      {/* Mobile sticky header */}
+      <div className="sticky top-0 z-40 -mx-4 mb-4 border-b bg-background/95 px-4 py-3 backdrop-blur lg:hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => selectedDay > 1 && setSelectedDay(selectedDay - 1)}
+              disabled={selectedDay <= 1}
+              className="flex size-8 items-center justify-center rounded-lg border text-muted-foreground hover:text-foreground disabled:opacity-30"
+            >
+              <ArrowLeft className="size-4" />
+            </button>
+            <button
+              onClick={() => setShowDayPicker(!showDayPicker)}
+              className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-semibold hover:bg-muted"
+            >
+              Day {selectedDay}
+              <ChevronDown className="size-3.5" />
+            </button>
+            <button
+              onClick={() => selectedDay < currentDay && setSelectedDay(selectedDay + 1)}
+              disabled={selectedDay >= currentDay}
+              className="flex size-8 items-center justify-center rounded-lg border text-muted-foreground hover:text-foreground disabled:opacity-30"
+            >
+              <ArrowRight className="size-4" />
+            </button>
+          </div>
+          {/* Circular progress - mobile */}
+          <div className="relative flex size-10 items-center justify-center">
+            <svg className="size-10 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeWidth="3" className="text-muted" />
+              <circle
+                cx="18" cy="18" r="15"
+                fill="none"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeDasharray={`${todayProgress * 0.9425} 94.25`}
+                style={{ stroke: phaseColor }}
+                className="transition-all duration-500"
+              />
+            </svg>
+            <span className="absolute text-[10px] font-bold" style={{ color: phaseColor }}>
+              {todayActionsDone}/{todayActionsTotal}
+            </span>
+          </div>
+        </div>
+
+        {/* Day picker dropdown */}
+        {showDayPicker && (
+          <div className="mt-3 flex flex-wrap gap-1.5 rounded-lg border bg-card p-2">
+            {Array.from({ length: program.totalDays }, (_, i) => i + 1).map((day) => {
+              const isLocked = day > currentDay
+              const isSelected = day === selectedDay
+              return (
+                <button
+                  key={day}
+                  onClick={() => {
+                    if (!isLocked) {
+                      setSelectedDay(day)
+                      setShowDayPicker(false)
+                    }
+                  }}
+                  disabled={isLocked}
+                  className={`flex size-8 items-center justify-center rounded-md text-xs font-semibold transition-colors ${
+                    isSelected
+                      ? "text-white"
+                      : isLocked
+                      ? "text-muted-foreground/40"
+                      : "hover:bg-muted"
+                  }`}
+                  style={isSelected ? { backgroundColor: phaseColor } : undefined}
+                >
+                  {day}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Compact Header */}
+      <div className="mb-6 rounded-xl p-4" style={{ backgroundColor: `${phaseColor}10` }}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-center gap-2">
+              <span
+                className="rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white"
+                style={{ backgroundColor: phaseColor }}
               >
-                <Play className="mr-2 size-4" />
-                {selectedDay === currentDay ? "Start Session" : "View Session"}
-              </Button>
-              {/* Circular progress ring */}
-              {todayActionsTotal > 0 && (
-                <div className="relative flex size-12 shrink-0 items-center justify-center">
-                  <svg className="size-12 -rotate-90" viewBox="0 0 36 36">
-                    <circle
-                      cx="18" cy="18" r="15"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.2)"
-                      strokeWidth="3"
-                    />
-                    <circle
-                      cx="18" cy="18" r="15"
-                      fill="none"
-                      stroke="white"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeDasharray={`${(todayActionsDone / todayActionsTotal) * 94.25} 94.25`}
-                      className="transition-all duration-500"
-                    />
-                  </svg>
-                  <span className="absolute text-xs font-bold text-white">
-                    {todayActionsDone}/{todayActionsTotal}
-                  </span>
-                </div>
-              )}
+                Week {currentWeek}
+              </span>
+              <span className="text-xs text-muted-foreground">Day {selectedDay}</span>
             </div>
+            <h1 className="text-xl font-bold text-foreground">
+              {todayContent?.title ?? `Day ${selectedDay}`}
+            </h1>
+            {currentPhase?.theme && (
+              <p className="mt-0.5 text-sm text-muted-foreground">{currentPhase.theme}</p>
+            )}
+          </div>
+          {/* Desktop day nav */}
+          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <button
+              onClick={() => selectedDay > 1 && setSelectedDay(selectedDay - 1)}
+              disabled={selectedDay <= 1}
+              className="flex size-8 items-center justify-center rounded-lg border hover:bg-muted disabled:opacity-30"
+            >
+              <ArrowLeft className="size-4" />
+            </button>
+            <span className="min-w-[60px] text-center text-sm font-medium text-muted-foreground">
+              {selectedDay} / {program.totalDays}
+            </span>
+            <button
+              onClick={() => selectedDay < currentDay && setSelectedDay(selectedDay + 1)}
+              disabled={selectedDay >= currentDay}
+              className="flex size-8 items-center justify-center rounded-lg border hover:bg-muted disabled:opacity-30"
+            >
+              <ArrowRight className="size-4" />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* ── Day nav arrows ── */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() =>
-            selectedDay > 1 && setSelectedDay(selectedDay - 1)
-          }
-          disabled={selectedDay <= 1}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground disabled:opacity-30"
-        >
-          <ArrowLeft className="size-4" />
-          Day {selectedDay - 1 > 0 ? selectedDay - 1 : ""}
-        </button>
-        <button
-          onClick={() =>
-            selectedDay < currentDay && setSelectedDay(selectedDay + 1)
-          }
-          disabled={selectedDay >= currentDay}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground disabled:opacity-30"
-        >
-          {selectedDay < currentDay ? `Day ${selectedDay + 1}` : ""}
-          {selectedDay >= currentDay && selectedDay < program.totalDays && (
-            <span className="flex items-center gap-1 opacity-50">
-              <Lock className="size-3" /> Day {selectedDay + 1}
-            </span>
-          )}
-          <ArrowRight className="size-4" />
-        </button>
-      </div>
-
-      {/* ── Session Content ── */}
-      <div id="session-content" className="flex flex-col gap-5">
-        {/* SCRIPTURE - Worship specific */}
+      {/* Content - No fluff, straight to learning */}
+      <div className="space-y-5">
+        {/* Scripture */}
         {todayContent?.scripture_text && (
-          <section className="overflow-hidden rounded-2xl border bg-card">
-            <div
-              className="flex items-center gap-3 px-5 py-3.5"
-              style={{ backgroundColor: `${activePhase.color}08` }}
-            >
+          <section className="rounded-xl border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
               <div
-                className="flex size-9 items-center justify-center rounded-lg text-white"
-                style={{ backgroundColor: activePhase.color }}
+                className="flex size-8 items-center justify-center rounded-lg text-white"
+                style={{ backgroundColor: phaseColor }}
               >
                 <BookOpen className="size-4" />
               </div>
               <div>
-                <h3 className="text-lg font-extrabold text-foreground">
-                  Scripture
-                </h3>
+                <h3 className="font-semibold text-foreground">Scripture</h3>
                 {todayContent.scripture_reference && (
-                  <span className="text-xs text-muted-foreground">
-                    {todayContent.scripture_reference}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{todayContent.scripture_reference}</span>
                 )}
               </div>
             </div>
-            <div className="px-5 py-4">
+            <div className="p-4">
               <p className="text-base italic leading-relaxed text-muted-foreground">
                 &ldquo;{todayContent.scripture_text}&rdquo;
               </p>
@@ -455,246 +301,132 @@ export function JourneyClient({
           </section>
         )}
 
-        {/* THOUGHT - Worship specific */}
+        {/* Thought */}
         {todayContent?.thought && (
-          <section className="overflow-hidden rounded-2xl border bg-card">
-            <div className="flex items-center gap-3 bg-amber-500/5 px-5 py-3.5">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-amber-500 text-white">
+          <section className="rounded-xl border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-amber-500 text-white">
                 <Lightbulb className="size-4" />
               </div>
-              <div>
-                <h3 className="text-lg font-extrabold text-foreground">
-                  Today&apos;s Thought
-                </h3>
-                <span className="text-xs text-muted-foreground">
-                  Reflect on this
-                </span>
-              </div>
+              <h3 className="font-semibold text-foreground">Today&apos;s Thought</h3>
             </div>
-            <div className="px-5 py-4">
-              <p className="text-base leading-relaxed text-muted-foreground">
-                {todayContent.thought}
-              </p>
+            <div className="p-4">
+              <p className="text-base leading-relaxed text-muted-foreground">{todayContent.thought}</p>
             </div>
           </section>
         )}
 
-        {/* REAL SCENARIO - Worship specific */}
+        {/* Real Scenario */}
         {todayContent?.real_scenario && (
-          <section className="overflow-hidden rounded-2xl border bg-card">
-            <div className="flex items-center gap-3 bg-purple-500/5 px-5 py-3.5">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-purple-500 text-white">
+          <section className="rounded-xl border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-purple-500 text-white">
                 <Sparkles className="size-4" />
               </div>
-              <div>
-                <h3 className="text-lg font-extrabold text-foreground">
-                  Real Scenario
-                </h3>
-                <span className="text-xs text-muted-foreground">
-                  Apply it to life
-                </span>
-              </div>
+              <h3 className="font-semibold text-foreground">Real Scenario</h3>
             </div>
-            <div className="px-5 py-4">
-              <p className="text-base leading-relaxed text-muted-foreground">
-                {todayContent.real_scenario}
-              </p>
+            <div className="p-4">
+              <p className="text-base leading-relaxed text-muted-foreground">{todayContent.real_scenario}</p>
             </div>
           </section>
         )}
 
-        {/* READ - Generic (for non-worship programs) */}
-        {todayContent?.motivational_keynote &&
-          todayContent.motivational_keynote.length > 0 && (
-            <section className="overflow-hidden rounded-2xl border bg-card">
-              <div
-                className="flex items-center gap-3 px-5 py-3.5"
-                style={{ backgroundColor: `${activePhase.color}08` }}
-              >
+        {/* Actions */}
+        {todayContent?.three_actions && todayContent.three_actions.length > 0 && (
+          <section className="rounded-xl border bg-card">
+            <div className="flex items-center justify-between border-b px-4 py-3">
+              <div className="flex items-center gap-3">
                 <div
-                  className="flex size-9 items-center justify-center rounded-lg text-white"
-                  style={{ backgroundColor: activePhase.color }}
+                  className="flex size-8 items-center justify-center rounded-lg text-white"
+                  style={{ backgroundColor: phaseColor }}
                 >
-                  <BookOpen className="size-4" />
+                  <Zap className="size-4" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-foreground">
-                    Read
-                  </h3>
-                  <span className="text-xs text-muted-foreground">
-                    Motivational Keynote
-                  </span>
-                </div>
+                <h3 className="font-semibold text-foreground">Actions</h3>
               </div>
-              <div className="space-y-3 px-5 py-4">
-                {todayContent.motivational_keynote.map((para, i) => (
-                  <p
+              <span
+                className="rounded-full px-2.5 py-1 text-xs font-bold text-white"
+                style={{ backgroundColor: phaseColor }}
+              >
+                {todayActionsDone}/{todayActionsTotal}
+              </span>
+            </div>
+            <div className="divide-y">
+              {todayContent.three_actions.map((action, i) => {
+                const isCompleted = completedActions.has(`${selectedDay}-${i}`)
+                return (
+                  <div
                     key={i}
-                    className="text-base leading-relaxed text-muted-foreground"
+                    className={`flex items-start gap-3 p-4 transition-colors ${
+                      isCompleted ? "bg-muted/30" : ""
+                    }`}
                   >
-                    {para}
-                  </p>
-                ))}
-              </div>
-            </section>
-          )}
-
-        {/* REFLECT - Generic (for non-worship programs) */}
-        {todayContent?.how_to_implement &&
-          todayContent.how_to_implement.length > 0 && (
-            <section className="overflow-hidden rounded-2xl border bg-card">
-              <div className="flex items-center gap-3 bg-amber-500/5 px-5 py-3.5">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-amber-500 text-white">
-                  <Lightbulb className="size-4" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-foreground">
-                    Reflect
-                  </h3>
-                  <span className="text-xs text-muted-foreground">
-                    How to Implement
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-3 px-5 py-4">
-                {todayContent.how_to_implement.map((para, i) => (
-                  <p
-                    key={i}
-                    className="text-base leading-relaxed text-muted-foreground"
-                  >
-                    {para}
-                  </p>
-                ))}
-              </div>
-            </section>
-          )}
-
-        {/* ACT */}
-        {todayContent?.three_actions &&
-          todayContent.three_actions.length > 0 && (
-            <section className="overflow-hidden rounded-2xl border bg-card">
-              <div className="flex items-center justify-between bg-blue-500/5 px-5 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-blue-500 text-white">
-                    <Zap className="size-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-extrabold text-foreground">
-                      Act
-                    </h3>
-                    <span className="text-xs text-muted-foreground">
-                      Strategic Actions
-                    </span>
-                  </div>
-                </div>
-                {/* Circular progress ring for Act section */}
-                <div className="relative flex size-11 shrink-0 items-center justify-center">
-                  <svg className="size-11 -rotate-90" viewBox="0 0 36 36">
-                    <circle
-                      cx="18" cy="18" r="15"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      className="text-muted"
-                    />
-                    <circle
-                      cx="18" cy="18" r="15"
-                      fill="none"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeDasharray={`${todayActionsTotal > 0 ? (todayActionsDone / todayActionsTotal) * 94.25 : 0} 94.25`}
-                      style={{ stroke: activePhase.color }}
-                      className="transition-all duration-500"
-                    />
-                  </svg>
-                  <span className="absolute text-xs font-bold text-foreground">
-                    {todayActionsDone}/{todayActionsTotal}
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2.5 p-4">
-                {todayContent.three_actions.map((action, i) => {
-                  const key = `${selectedDay}-${i}`
-                  const done = completedActions.has(key)
-                  return (
                     <button
-                      key={i}
                       onClick={() => toggleAction(selectedDay, i)}
                       disabled={saving}
-                      className={`group flex items-start gap-4 rounded-xl border-2 p-4 text-left transition-all ${
-                        done ? "border-transparent" : "hover:shadow-md"
-                      }`}
-                      style={
-                        done
-                          ? {
-                              backgroundColor: `${activePhase.color}06`,
-                              borderColor: `${activePhase.color}25`,
-                            }
-                          : undefined
-                      }
+                      className="mt-0.5 shrink-0"
                     >
-                      <div
-                        className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
-                          done ? "border-transparent" : ""
+                      <CheckCircle2
+                        className={`size-5 transition-colors ${
+                          isCompleted ? "fill-current" : ""
                         }`}
-                        style={
-                          done
-                            ? { backgroundColor: activePhase.color }
-                            : { borderColor: `${activePhase.color}40` }
-                        }
-                      >
-                        {done && (
-                          <CheckCircle2 className="size-5 text-white" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4
-                          className={`text-base font-bold ${
-                            done
-                              ? "text-muted-foreground line-through"
-                              : "text-foreground"
-                          }`}
-                        >
-                          {action.action_title}
-                        </h4>
-                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                          {action.instruction}
-                        </p>
-                      </div>
+                        style={{ color: isCompleted ? phaseColor : "#d1d5db" }}
+                      />
                     </button>
-                  )
-                })}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground">{action.action_title}</p>
+                      <p className="mt-0.5 text-sm text-muted-foreground">{action.instruction}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Generic Read section for non-worship */}
+        {todayContent?.motivational_keynote && todayContent.motivational_keynote.length > 0 && (
+          <section className="rounded-xl border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <div
+                className="flex size-8 items-center justify-center rounded-lg text-white"
+                style={{ backgroundColor: phaseColor }}
+              >
+                <BookOpen className="size-4" />
               </div>
+              <h3 className="font-semibold text-foreground">Read</h3>
+            </div>
+            <div className="space-y-3 p-4">
+              {todayContent.motivational_keynote.map((para, i) => (
+                <p key={i} className="text-base leading-relaxed text-muted-foreground">{para}</p>
+              ))}
+            </div>
+          </section>
+        )}
 
-              {todayProgress === 100 && (
-                <div
-                  className="flex items-center gap-3 px-5 py-3"
-                  style={{ backgroundColor: `${activePhase.color}10` }}
-                >
-                  <Sparkles
-                    className="size-5"
-                    style={{ color: activePhase.color }}
-                  />
-                  <p
-                    className="text-sm font-bold"
-                    style={{ color: activePhase.color }}
-                  >
-                    All actions completed for Day {selectedDay}! Great work.
-                  </p>
-                </div>
-              )}
-            </section>
-          )}
+        {/* Generic Reflect section for non-worship */}
+        {todayContent?.how_to_implement && todayContent.how_to_implement.length > 0 && (
+          <section className="rounded-xl border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-amber-500 text-white">
+                <Lightbulb className="size-4" />
+              </div>
+              <h3 className="font-semibold text-foreground">Reflect</h3>
+            </div>
+            <div className="space-y-3 p-4">
+              {todayContent.how_to_implement.map((para, i) => (
+                <p key={i} className="text-base leading-relaxed text-muted-foreground">{para}</p>
+              ))}
+            </div>
+          </section>
+        )}
 
+        {/* Empty state */}
         {!todayContent && (
-          <div className="flex flex-col items-center justify-center rounded-2xl border bg-card py-16 text-center">
-            <BookOpen className="mb-3 size-10 text-muted-foreground/40" />
-            <h3 className="text-lg font-bold text-foreground">
-              Content Coming Soon
-            </h3>
-            <p className="mt-1 max-w-xs text-sm text-muted-foreground">
-              Day {selectedDay} content is being prepared.
-            </p>
+          <div className="flex flex-col items-center justify-center rounded-xl border bg-card py-16 text-center">
+            <BookOpen className="mb-4 size-12 text-muted-foreground/50" />
+            <h3 className="text-lg font-semibold text-foreground">Content Coming Soon</h3>
+            <p className="mt-1 text-sm text-muted-foreground">Day {selectedDay} content is being prepared.</p>
           </div>
         )}
       </div>
