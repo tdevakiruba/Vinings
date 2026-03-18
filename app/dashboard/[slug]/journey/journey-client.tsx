@@ -17,37 +17,7 @@ import {
   Crown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-/* ── Phase definitions ── */
-const PHASES = [
-  {
-    id: "foundation",
-    label: "Foundation",
-    dayStart: 1,
-    dayEnd: 7,
-    color: "#00c892",
-    icon: Rocket,
-    tagline: "Build your professional identity",
-  },
-  {
-    id: "growth",
-    label: "Growth Strategy",
-    dayStart: 8,
-    dayEnd: 14,
-    color: "#0077b6",
-    icon: TrendingUp,
-    tagline: "Develop core leadership skills",
-  },
-  {
-    id: "mastery",
-    label: "Leadership Mastery",
-    dayStart: 15,
-    dayEnd: 21,
-    color: "#1b2a4a",
-    icon: Crown,
-    tagline: "Lead with influence and trust",
-  },
-]
+import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
 
 interface CurriculumDay {
   day_number: number
@@ -107,7 +77,7 @@ export function JourneyClient({
             label: providedPhases[i].theme || `Phase ${i + 1}`,
             dayStart: Math.round(dayStart),
             dayEnd: Math.round(dayEnd),
-            color: ["#00c892", "#0077b6", "#1b2a4a"][i % 3],
+            color: [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3][i % 3],
             icon: [Rocket, TrendingUp, Crown][i % 3],
             tagline: providedPhases[i].theme || `Days ${Math.round(dayStart)}-${Math.round(dayEnd)}`,
           })

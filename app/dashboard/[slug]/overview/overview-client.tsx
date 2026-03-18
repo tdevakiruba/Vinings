@@ -8,47 +8,14 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  Crown,
   Flame,
   MapPin,
-  Rocket,
   Sparkles,
   Target,
-  TrendingUp,
   Trophy,
   Zap,
 } from "lucide-react"
-
-/* ── Phase definitions ── */
-const PHASES = [
-  {
-    id: "foundation",
-    label: "Foundation",
-    dayStart: 1,
-    dayEnd: 7,
-    color: "#00c892",
-    icon: Rocket,
-    tagline: "Build your professional identity",
-  },
-  {
-    id: "growth",
-    label: "Growth Strategy",
-    dayStart: 8,
-    dayEnd: 14,
-    color: "#0077b6",
-    icon: TrendingUp,
-    tagline: "Develop core leadership skills",
-  },
-  {
-    id: "mastery",
-    label: "Leadership Mastery",
-    dayStart: 15,
-    dayEnd: 21,
-    color: "#1b2a4a",
-    icon: Crown,
-    tagline: "Lead with influence and trust",
-  },
-]
+import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
 
 interface Phase {
   id: string
@@ -201,19 +168,19 @@ export function OverviewClient({
           icon={<CheckCircle2 className="size-6" />}
           label="Actions Done"
           value={stats.actionsCompleted.toString()}
-          accent="#0077b6"
+          accent={VC_BLUE.accent}
         />
         <StatCard
           icon={<Flame className="size-6" />}
           label="Current Streak"
           value={`${stats.currentStreak}d`}
-          accent="#f59e0b"
+          accent={VC_BLUE.streak}
         />
         <StatCard
           icon={<Trophy className="size-6" />}
           label="Best Streak"
           value={`${stats.longestStreak}d`}
-          accent="#1b2a4a"
+          accent={VC_BLUE.phase1}
         />
       </div>
 
@@ -304,7 +271,7 @@ export function OverviewClient({
               href={`/dashboard/${program.slug}/frameworks`}
               className="flex items-center gap-4 rounded-xl border p-4 transition-all hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.accent}15`, color: VC_BLUE.accent }}>
                 <BookOpen className="size-5" />
               </div>
               <div>
@@ -321,7 +288,7 @@ export function OverviewClient({
               href={`/dashboard/${program.slug}/certificates`}
               className="flex items-center gap-4 rounded-xl border p-4 transition-all hover:shadow-md"
             >
-              <div className="flex size-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+              <div className="flex size-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${VC_BLUE.phase1}15`, color: VC_BLUE.phase1 }}>
                 <Trophy className="size-5" />
               </div>
               <div>
