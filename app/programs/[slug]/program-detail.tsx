@@ -125,7 +125,7 @@ interface CurriculumDay {
 /* ── Static hero map ── */
 const heroBackgrounds: Record<string, string> = {
   "workforce-ready": "/images/p1.jpg",
-  "worship-microlearning-21-day": "/images/programs/worship-hero.jpg",
+  "worship-wins-the-war-21day": "/images/programs/worship-hero.jpg",
 }
 const heroIcons: Record<string, string> = {
   "workforce-ready": "/images/workforce-icon.png",
@@ -197,11 +197,11 @@ const testimonialsBySlug: Record<
       text: "The peer community was amazing. Having other young leaders to grow with made the experience so much richer.",
     },
   ],
-  "worship-microlearning-21-day": [
+  "worship-wins-the-war-21day": [
     {
       name: "Pastor Michael Brown",
       role: "Senior Pastor",
-      text: "This program transformed how I approach worship leadership. The daily micron actions have deepened my spiritual practice and strengthened our congregation.",
+      text: "This program transformed how I approach worship leadership. The daily microactions have deepened my spiritual practice and strengthened our congregation.",
     },
     {
       name: "Grace Chen",
@@ -271,7 +271,7 @@ export function ProgramDetail({
   hasSubscription: boolean
 }) {
   // If this is the worship program, render the specialized component
-  if (program.slug === "worship-microlearning-21-day" && curriculum.length > 0) {
+  if (program.slug === "worship-wins-the-war-21day") {
     return (
       <WorshipProgramDetail
         program={program}

@@ -108,7 +108,7 @@ export default async function ProgramPage({
   // Fetch curriculum - check if this is the worship program
   let curriculum: any[] = []
 
-  if (slug === "worship-microlearning-21-day") {
+  if (slug === "worship-wins-the-war-21day") {
     const { data: lessons } = await supabase
       .from("vc_worship_microlearning_lessons")
       .select("*")
