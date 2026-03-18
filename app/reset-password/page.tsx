@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,11 +11,38 @@ import Link from "next/link"
 
 export default function ResetPasswordPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [initialized, setInitialized] = useState(false)
+
+  useEffect(() => {
+    const code = searchParams.get("code")
+    if (!code) {
+      setError("Invalid reset link. Please request a new password reset.")
+      setInitialized(true)
+      return
+    }
+
+    // Exchange the code for a session
+    const setupSession = async () => {
+      const supabase = createClient()
+      const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
+
+      if (sessionError) {
+        setError(
+          sessionError.message || "Invalid or expired reset link. Please request a new password reset."
+        )
+      }
+
+      setInitialized(true)
+    }
+
+    setupSession()
+  }, [searchParams])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -51,6 +78,37 @@ export default function ResetPasswordPage() {
     setTimeout(() => {
       router.push("/signin")
     }, 3000)
+  }
+
+  if (!initialized) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center bg-wf-bg px-4 py-16">
+        <div className="w-full max-w-sm text-center">
+          <Loader2 className="mx-auto size-8 animate-spin text-wf-mint" />
+          <p className="mt-4 text-sm text-muted-foreground">
+            Verifying your reset link...
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error && !initialized) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center bg-wf-bg px-4 py-16">
+        <div className="w-full max-w-sm text-center">
+          <h1 className="text-2xl font-bold text-foreground">Link invalid or expired</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {error}
+          </p>
+          <Link href="/forgot-password">
+            <Button className="mt-6 rounded-xl bg-wf-mint text-white hover:bg-wf-mint-light">
+              Request new reset link
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   if (success) {
