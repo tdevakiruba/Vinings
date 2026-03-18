@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
   // Find the next upcoming office hours session
   const { data: nextSession } = await supabase
-    .from("VC_office_hours")
+    .from("vc_office_hours")
     .select("id")
     .eq("is_active", true)
     .gte("scheduled_at", new Date().toISOString())
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     .maybeSingle()
 
   const { data: submission, error } = await supabase
-    .from("VC_lab_submissions")
+    .from("vc_lab_submissions")
     .insert({
       user_id: user.id,
       program_id: programId,

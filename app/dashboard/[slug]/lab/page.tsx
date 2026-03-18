@@ -16,7 +16,7 @@ export default async function LabPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, slug, title")
     .eq("slug", slug)
     .single()
@@ -24,7 +24,7 @@ export default async function LabPage({
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("VC_enrollments")
+    .from("vc_enrollments")
     .select("id")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -35,7 +35,7 @@ export default async function LabPage({
 
   // Fetch next upcoming office hours for this program
   const { data: nextOfficeHours } = await supabase
-    .from("VC_office_hours")
+    .from("vc_office_hours")
     .select("id, title, description, meeting_url, scheduled_at, duration_minutes, is_active")
     .eq("is_active", true)
     .gte("scheduled_at", new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString())
@@ -45,7 +45,7 @@ export default async function LabPage({
 
   // Fetch user's submissions
   const { data: submissions } = await supabase
-    .from("VC_lab_submissions")
+    .from("vc_lab_submissions")
     .select("id, lab_name, submission_text, status, submitted_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)

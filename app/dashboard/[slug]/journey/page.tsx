@@ -17,7 +17,7 @@ export default async function JourneyPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, slug, title, duration")
     .eq("slug", slug)
     .single()
@@ -25,7 +25,7 @@ export default async function JourneyPage({
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("VC_enrollments")
+    .from("vc_enrollments")
     .select("id, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -59,7 +59,7 @@ export default async function JourneyPage({
 
   if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
-      .from("VC_workforce_mindset_21day")
+      .from("vc_workforce_mindset_21day")
       .select(
         "day_number, title, theme, overview, main_content, exercises"
       )
@@ -69,7 +69,7 @@ export default async function JourneyPage({
 
   // Fetch user action progress
   const { data: userActions } = await supabase
-    .from("VC_user_actions")
+    .from("vc_user_actions")
     .select("action_type, action_data, created_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)

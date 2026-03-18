@@ -16,7 +16,7 @@ export default async function FrameworksPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, slug, title, duration")
     .eq("slug", slug)
     .single()
@@ -24,7 +24,7 @@ export default async function FrameworksPage({
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("VC_enrollments")
+    .from("vc_enrollments")
     .select("id, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -54,7 +54,7 @@ export default async function FrameworksPage({
 
   if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
-      .from("VC_workforce_mindset_21day")
+      .from("vc_workforce_mindset_21day")
       .select("day_number, title, theme")
       .order("day_number")
     curriculum = days ?? []
@@ -62,7 +62,7 @@ export default async function FrameworksPage({
 
   // Fetch user action completions per day
   const { data: userActions } = await supabase
-    .from("VC_user_actions")
+    .from("vc_user_actions")
     .select("action_type, action_data")
     .eq("user_id", user.id)
     .eq("program_id", program.id)

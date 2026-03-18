@@ -18,7 +18,7 @@ export default async function OverviewPage({
 
   // Get program
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, slug, title, tagline, duration, description")
     .eq("slug", slug)
     .single()
@@ -27,7 +27,7 @@ export default async function OverviewPage({
 
   // Get enrollment
   const { data: enrollment } = await supabase
-    .from("VC_enrollments")
+    .from("vc_enrollments")
     .select("id, progress_percentage, enrolled_at, status")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -38,7 +38,7 @@ export default async function OverviewPage({
 
   // Get subscription
   const { data: subscription } = await supabase
-    .from("VC_subscriptions")
+    .from("vc_subscriptions")
     .select("plan_type, current_period_start, current_period_end")
     .eq("user_id", user.id)
     .eq("status", "active")
@@ -59,14 +59,14 @@ export default async function OverviewPage({
 
   // Get user actions completed
   const { count: actionsCompleted } = await supabase
-    .from("VC_user_actions")
+    .from("vc_user_actions")
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id)
     .eq("program_id", program.id)
 
   // Get streak
   const { data: streak } = await supabase
-    .from("VC_user_streaks")
+    .from("vc_user_streaks")
     .select("current_streak, longest_streak, last_activity_date")
     .eq("user_id", user.id)
     .maybeSingle()
@@ -75,7 +75,7 @@ export default async function OverviewPage({
   let dailyInsight: { title: string; keyTheme: string } | null = null
   if (slug === "workforce-mindset-21-day") {
     const { data: dayData } = await supabase
-      .from("VC_workforce_mindset_21day")
+      .from("vc_workforce_mindset_21day")
       .select("title, theme")
       .eq("day_number", currentDay)
       .maybeSingle()

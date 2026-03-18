@@ -18,28 +18,28 @@ export default async function DashboardPage() {
 
   // Get profile
   const { data: profile } = await supabase
-    .from("VC_profiles")
+    .from("vc_profiles")
     .select("first_name, last_name")
     .eq("id", user.id)
     .maybeSingle()
 
   // Get ALL active subscriptions for this user
   const { data: subscriptions } = await supabase
-    .from("VC_subscriptions")
+    .from("vc_subscriptions")
     .select("*")
     .eq("user_id", user.id)
     .eq("status", "active")
 
   // Get ALL active enrollments with their program data
   const { data: enrollments } = await supabase
-    .from("VC_enrollments")
-    .select("*, VC_programs(id, slug, title, tagline, duration)")
+    .from("vc_enrollments")
+    .select("*, vc_programs(id, slug, title, tagline, duration)")
     .eq("user_id", user.id)
     .eq("status", "active")
 
   // Build journey data for each enrollment
   const journeys = (enrollments ?? []).map((enrollment) => {
-    const program = enrollment.VC_programs as {
+    const program = enrollment.vc_programs as {
       id: string
       slug: string
       title: string
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
 
   // Get all programs for "Discover more" section
   const { data: allPrograms } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, title, slug, tagline, duration")
     .eq("is_active", true)
     .order("sort_order")

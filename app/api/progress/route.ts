@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
   // Insert action progress
   const { error } = await supabase
-    .from("VC_user_actions")
+    .from("vc_user_actions")
     .insert({
       user_id: user.id,
       program_id: programId,

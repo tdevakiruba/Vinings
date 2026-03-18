@@ -16,7 +16,7 @@ export default async function CertificatesPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, slug, title, duration")
     .eq("slug", slug)
     .single()
@@ -24,7 +24,7 @@ export default async function CertificatesPage({
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("VC_enrollments")
+    .from("vc_enrollments")
     .select("id, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -50,7 +50,7 @@ export default async function CertificatesPage({
 
   // Fetch phases for milestone certificates
   const { data: phases } = await supabase
-    .from("VC_program_phases")
+    .from("vc_program_phases")
     .select("phase_number, title, duration")
     .eq("program_id", program.id)
     .order("sort_order")

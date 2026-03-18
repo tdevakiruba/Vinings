@@ -12,7 +12,7 @@ export async function generateMetadata({
     const { slug } = await params
     const supabase = await createClient()
     const { data: program } = await supabase
-      .from("VC_programs")
+      .from("vc_programs")
       .select("title, tagline")
       .eq("slug", slug)
       .maybeSingle()
@@ -43,7 +43,7 @@ export default async function ProgramPage({
   }
 
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("*")
     .eq("slug", slug)
     .maybeSingle()
@@ -59,17 +59,17 @@ export default async function ProgramPage({
     },
   ] = await Promise.all([
     supabase
-      .from("VC_program_features")
+      .from("vc_program_features")
       .select("*")
       .eq("program_id", program.id)
       .order("sort_order"),
     supabase
-      .from("VC_program_phases")
+      .from("vc_program_phases")
       .select("*")
       .eq("program_id", program.id)
       .order("sort_order"),
     supabase
-      .from("VC_program_pricing")
+      .from("vc_program_pricing")
       .select("*")
       .eq("program_id", program.id)
       .order("sort_order"),
@@ -80,7 +80,7 @@ export default async function ProgramPage({
   let hasSubscription = false
   if (user) {
     const { data: sub } = await supabase
-      .from("VC_subscriptions")
+      .from("vc_subscriptions")
       .select("id, status")
       .eq("user_id", user.id)
       .eq("program_id", program.id)
@@ -114,7 +114,7 @@ export default async function ProgramPage({
 
   if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
-      .from("VC_workforce_mindset_21day")
+      .from("vc_workforce_mindset_21day")
       .select("day_number, title, theme")
       .order("day_number")
     curriculum = days ?? []

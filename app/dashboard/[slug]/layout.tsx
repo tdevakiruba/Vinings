@@ -10,7 +10,7 @@ export async function generateMetadata({
   const { slug } = await params
   const supabase = await createClient()
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("title")
     .eq("slug", slug)
     .maybeSingle()
@@ -38,7 +38,7 @@ export default async function ProductDashboardLayout({
 
   // Fetch program
   const { data: program } = await supabase
-    .from("VC_programs")
+    .from("vc_programs")
     .select("id, slug, title, tagline, duration")
     .eq("slug", slug)
     .maybeSingle()
@@ -47,7 +47,7 @@ export default async function ProductDashboardLayout({
 
   // Verify active enrollment
   const { data: enrollment } = await supabase
-    .from("VC_enrollments")
+    .from("vc_enrollments")
     .select("id, status, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -60,7 +60,7 @@ export default async function ProductDashboardLayout({
 
   // Get subscription info
   const { data: subscription } = await supabase
-    .from("VC_subscriptions")
+    .from("vc_subscriptions")
     .select("plan_type, current_period_start, current_period_end")
     .eq("user_id", user.id)
     .eq("status", "active")
