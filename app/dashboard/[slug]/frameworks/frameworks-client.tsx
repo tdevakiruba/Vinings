@@ -132,10 +132,10 @@ export function FrameworksClient({
             <h2 className="truncate text-xl font-extrabold text-white sm:text-2xl">
               {recommendedDay?.title ?? `Day ${currentDay}`}
             </h2>
-        {recommendedDay?.theme && (
-          <span className="text-xs text-white/60">
-            {recommendedDay.theme}
-              </p>
+            {recommendedDay?.theme && (
+              <span className="text-xs text-white/60">
+                {recommendedDay.theme}
+              </span>
             )}
           </div>
           <Link
