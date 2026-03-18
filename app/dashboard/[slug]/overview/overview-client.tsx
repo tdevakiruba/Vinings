@@ -18,7 +18,7 @@ import {
   Rocket,
   TrendingUp,
 } from "lucide-react"
-import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
+import { PROGRAM_PHASES as HARDCODED_PHASES, VC_BLUE } from "@/lib/program-phases"
 
 interface Phase {
   week_number: number | null
@@ -73,7 +73,7 @@ export function OverviewClient({
   const iconSrc = programIcons[program.slug]
   const logoSrc = programLogos[program.slug]
 
-  // Build dynamic PHASES from passed data or fallback to imported constant
+  // Build dynamic PHASES from passed data or fallback to hardcoded constant
   const PHASES = phasesData && phasesData.length > 0
     ? (() => {
         const colors = [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3]
@@ -89,7 +89,7 @@ export function OverviewClient({
           tagline: `Week ${phase.week_number || i + 1}`,
         }))
       })()
-    : PHASES  // fallback to imported hardcoded phases
+    : HARDCODED_PHASES
 
   return (
     <div className="mx-auto max-w-5xl">
