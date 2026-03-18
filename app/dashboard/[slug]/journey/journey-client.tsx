@@ -53,9 +53,14 @@ interface CurriculumDay {
   day_number: number
   title: string
   key_theme: string | null
-  motivational_keynote: string[] | null
-  how_to_implement: string[] | null
+  motivational_keynote?: string[] | null
+  how_to_implement?: string[] | null
   three_actions: { action_title: string; instruction: string }[] | null
+  // Worship-specific fields
+  scripture_reference?: string | null
+  scripture_text?: string | null
+  thought?: string | null
+  real_scenario?: string | null
 }
 
 interface JourneyClientProps {
@@ -411,7 +416,87 @@ export function JourneyClient({
 
       {/* ── Session Content ── */}
       <div id="session-content" className="flex flex-col gap-5">
-        {/* READ */}
+        {/* SCRIPTURE - Worship specific */}
+        {todayContent?.scripture_text && (
+          <section className="overflow-hidden rounded-2xl border bg-card">
+            <div
+              className="flex items-center gap-3 px-5 py-3.5"
+              style={{ backgroundColor: `${activePhase.color}08` }}
+            >
+              <div
+                className="flex size-9 items-center justify-center rounded-lg text-white"
+                style={{ backgroundColor: activePhase.color }}
+              >
+                <BookOpen className="size-4" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-foreground">
+                  Scripture
+                </h3>
+                {todayContent.scripture_reference && (
+                  <span className="text-xs text-muted-foreground">
+                    {todayContent.scripture_reference}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-base italic leading-relaxed text-muted-foreground">
+                &ldquo;{todayContent.scripture_text}&rdquo;
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* THOUGHT - Worship specific */}
+        {todayContent?.thought && (
+          <section className="overflow-hidden rounded-2xl border bg-card">
+            <div className="flex items-center gap-3 bg-amber-500/5 px-5 py-3.5">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-amber-500 text-white">
+                <Lightbulb className="size-4" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-foreground">
+                  Today&apos;s Thought
+                </h3>
+                <span className="text-xs text-muted-foreground">
+                  Reflect on this
+                </span>
+              </div>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-base leading-relaxed text-muted-foreground">
+                {todayContent.thought}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* REAL SCENARIO - Worship specific */}
+        {todayContent?.real_scenario && (
+          <section className="overflow-hidden rounded-2xl border bg-card">
+            <div className="flex items-center gap-3 bg-purple-500/5 px-5 py-3.5">
+              <div className="flex size-9 items-center justify-center rounded-lg bg-purple-500 text-white">
+                <Sparkles className="size-4" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-foreground">
+                  Real Scenario
+                </h3>
+                <span className="text-xs text-muted-foreground">
+                  Apply it to life
+                </span>
+              </div>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-base leading-relaxed text-muted-foreground">
+                {todayContent.real_scenario}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* READ - Generic (for non-worship programs) */}
         {todayContent?.motivational_keynote &&
           todayContent.motivational_keynote.length > 0 && (
             <section className="overflow-hidden rounded-2xl border bg-card">
@@ -447,7 +532,7 @@ export function JourneyClient({
             </section>
           )}
 
-        {/* REFLECT */}
+        {/* REFLECT - Generic (for non-worship programs) */}
         {todayContent?.how_to_implement &&
           todayContent.how_to_implement.length > 0 && (
             <section className="overflow-hidden rounded-2xl border bg-card">
