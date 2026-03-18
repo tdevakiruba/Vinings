@@ -87,6 +87,25 @@ export default async function OverviewPage({
     }
   }
 
+  // Fetch phases/themes for the program
+  let phases: { week_number: number | null; theme: string }[] = []
+  if (slug === "worship-wins-the-war-21day") {
+    const { data: weeklyThemes } = await supabase
+      .from("vc_worship_microlearning_lessons")
+      .select("week_number, theme")
+      .eq("is_active", true)
+      .distinct()
+      .order("week_number")
+    phases = weeklyThemes ?? []
+  } else {
+    // Default phases for workforce program
+    phases = [
+      { week_number: 1, theme: "Foundation" },
+      { week_number: 2, theme: "Growth Strategy" },
+      { week_number: 3, theme: "Leadership Mastery" },
+    ]
+  }
+
   return (
     <OverviewClient
       program={{
@@ -113,7 +132,7 @@ export default async function OverviewPage({
         longestStreak: streak?.longest_streak ?? 0,
         lastActivity: streak?.last_activity_date ?? null,
       }}
-      phases={[]}
+      phases={phases}
       dailyInsight={dailyInsight}
     />
   )

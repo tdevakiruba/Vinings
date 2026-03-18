@@ -14,17 +14,15 @@ import {
   Target,
   Trophy,
   Zap,
+  Crown,
+  Rocket,
+  TrendingUp,
 } from "lucide-react"
 import { PROGRAM_PHASES as PHASES, VC_BLUE } from "@/lib/program-phases"
 
 interface Phase {
-  id: string
-  phase_number: number
-  title: string
-  description: string | null
-  day_start: number | null
-  day_end: number | null
-  sort_order: number
+  week_number: number | null
+  theme: string
 }
 
 interface OverviewClientProps {
@@ -68,12 +66,30 @@ export function OverviewClient({
   program,
   enrollment,
   stats,
-  phases,
+  phases: phasesData,
   dailyInsight,
 }: OverviewClientProps) {
   const daysRemaining = enrollment.totalDays - enrollment.currentDay
   const iconSrc = programIcons[program.slug]
   const logoSrc = programLogos[program.slug]
+
+  // Build dynamic PHASES from passed data or fallback to imported constant
+  const PHASES = phasesData && phasesData.length > 0
+    ? (() => {
+        const colors = [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3]
+        const icons = [Rocket, TrendingUp, Crown]
+        const daysPerPhase = Math.ceil(enrollment.totalDays / phasesData.length)
+        return phasesData.map((phase, i) => ({
+          id: `phase-${i}`,
+          label: phase.theme,
+          dayStart: i * daysPerPhase + 1,
+          dayEnd: Math.min((i + 1) * daysPerPhase, enrollment.totalDays),
+          color: colors[i % colors.length],
+          icon: icons[i % icons.length],
+          tagline: `Week ${phase.week_number || i + 1}`,
+        }))
+      })()
+    : PHASES  // fallback to imported hardcoded phases
 
   return (
     <div className="mx-auto max-w-5xl">
