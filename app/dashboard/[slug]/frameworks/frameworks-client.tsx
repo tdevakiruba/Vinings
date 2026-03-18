@@ -8,9 +8,12 @@ import {
   Search,
   Sparkles,
   ArrowRight,
+  Rocket,
+  TrendingUp,
+  Crown,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { PROGRAM_PHASES as PHASES } from "@/lib/program-phases"
+import { VC_BLUE } from "@/lib/program-phases"
 
 interface FrameworksClientProps {
   program: {
@@ -24,15 +27,10 @@ interface FrameworksClientProps {
   curriculum: {
     day_number: number
     title: string
-    key_theme: string | null
+    theme: string | null
   }[]
   completionMap: Record<number, { total: number; done: number }>
-  phases: {
-    number: number
-    title: string
-    dayStart: number
-    dayEnd: number
-  }[]
+  phases: { week_number: number | null; theme: string }[]
 }
 
 export function FrameworksClient({
@@ -40,9 +38,32 @@ export function FrameworksClient({
   currentDay,
   curriculum,
   completionMap,
+  phases: phasesData,
 }: FrameworksClientProps) {
   const [search, setSearch] = useState("")
   const [activePhaseId, setActivePhaseId] = useState<string | null>(null)
+
+  // Build PHASES from passed data
+  const PHASES = phasesData.length > 0
+    ? (() => {
+        const colors = [VC_BLUE.phase1, VC_BLUE.phase2, VC_BLUE.phase3]
+        const icons = [Rocket, TrendingUp, Crown]
+        const daysPerPhase = Math.ceil(program.totalDays / phasesData.length)
+        return phasesData.map((phase, i) => ({
+          id: `phase-${i}`,
+          label: phase.theme,
+          dayStart: i * daysPerPhase + 1,
+          dayEnd: Math.min((i + 1) * daysPerPhase, program.totalDays),
+          color: colors[i % colors.length],
+          icon: icons[i % icons.length],
+          tagline: `Week ${phase.week_number || i + 1}`,
+        }))
+      })()
+    : [
+        { id: "foundation", label: "Foundation", dayStart: 1, dayEnd: 7, color: VC_BLUE.phase1, icon: Rocket, tagline: "Week 1" },
+        { id: "growth", label: "Growth Strategy", dayStart: 8, dayEnd: 14, color: VC_BLUE.phase2, icon: TrendingUp, tagline: "Week 2" },
+        { id: "mastery", label: "Leadership Mastery", dayStart: 15, dayEnd: 21, color: VC_BLUE.phase3, icon: Crown, tagline: "Week 3" },
+      ]
 
   const completedCount = curriculum.filter((d) => {
     const c = completionMap[d.day_number]
@@ -70,11 +91,11 @@ export function FrameworksClient({
       result = result.filter(
         (d) =>
           d.title.toLowerCase().includes(q) ||
-          (d.key_theme && d.key_theme.toLowerCase().includes(q))
+          (d.theme && d.theme.toLowerCase().includes(q))
       )
     }
     return result
-  }, [curriculum, activePhaseId, search])
+  }, [curriculum, activePhaseId, search, PHASES])
 
   function getDayStatus(dayNum: number) {
     if (dayNum > currentDay) return "locked"
@@ -111,10 +132,10 @@ export function FrameworksClient({
             <h2 className="truncate text-xl font-extrabold text-white sm:text-2xl">
               {recommendedDay?.title ?? `Day ${currentDay}`}
             </h2>
-            {recommendedDay?.key_theme && (
-              <p className="mt-0.5 truncate text-sm text-white/80">
-                {recommendedDay.key_theme}
-              </p>
+            {recommendedDay?.theme && (
+              <span className="text-xs text-white/60">
+                {recommendedDay.theme}
+              </span>
             )}
           </div>
           <Link
@@ -322,10 +343,10 @@ export function FrameworksClient({
                       <h4 className="text-sm font-bold leading-tight text-foreground line-clamp-2">
                         {day.title}
                       </h4>
-                      {day.key_theme && (
-                        <p className="mt-1 text-xs text-muted-foreground line-clamp-1">
-                          {day.key_theme}
-                        </p>
+                      {day.theme && (
+                        <span className="text-xs text-muted-foreground">
+                          {day.theme}
+                        </span>
                       )}
                       {isCurrent && (
                         <span

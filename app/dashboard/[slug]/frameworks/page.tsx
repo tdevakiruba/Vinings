@@ -84,6 +84,34 @@ export default async function FrameworksPage({
     if (a.completed) completionMap[a.day_number].done++
   }
 
+  // Fetch phases/themes (deduplicated by week)
+  let phases: { week_number: number | null; theme: string }[] = []
+  if (slug === "worship-wins-the-war-21day") {
+    const { data: weeklyThemes } = await supabase
+      .from("vc_worship_microlearning_lessons")
+      .select("week_number, theme")
+      .eq("is_active", true)
+      .order("week_number")
+    // Deduplicate by week_number to get 3 unique phases
+    const uniquePhases = new Map<number, string>()
+    for (const row of weeklyThemes ?? []) {
+      if (row.week_number && !uniquePhases.has(row.week_number)) {
+        uniquePhases.set(row.week_number, row.theme)
+      }
+    }
+    phases = Array.from(uniquePhases.entries()).map(([week_number, theme]) => ({
+      week_number,
+      theme,
+    }))
+  } else {
+    // Default phases for workforce program
+    phases = [
+      { week_number: 1, theme: "Foundation" },
+      { week_number: 2, theme: "Growth Strategy" },
+      { week_number: 3, theme: "Leadership Mastery" },
+    ]
+  }
+
   return (
     <FrameworksClient
       program={{
@@ -96,7 +124,7 @@ export default async function FrameworksPage({
       currentDay={currentDay}
       curriculum={curriculum}
       completionMap={completionMap}
-      phases={[]}
+      phases={phases}
     />
   )
 }

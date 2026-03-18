@@ -87,7 +87,7 @@ export default async function OverviewPage({
     }
   }
 
-  // Fetch phases/themes for the program
+  // Fetch phases/themes for the program (deduplicated by week)
   let phases: { week_number: number | null; theme: string }[] = []
   if (slug === "worship-wins-the-war-21day") {
     const { data: weeklyThemes } = await supabase
@@ -95,7 +95,17 @@ export default async function OverviewPage({
       .select("week_number, theme")
       .eq("is_active", true)
       .order("week_number")
-    phases = weeklyThemes ?? []
+    // Deduplicate by week_number to get 3 unique phases
+    const uniquePhases = new Map<number, string>()
+    for (const row of weeklyThemes ?? []) {
+      if (row.week_number && !uniquePhases.has(row.week_number)) {
+        uniquePhases.set(row.week_number, row.theme)
+      }
+    }
+    phases = Array.from(uniquePhases.entries()).map(([week_number, theme]) => ({
+      week_number,
+      theme,
+    }))
   } else {
     // Default phases for workforce program
     phases = [
