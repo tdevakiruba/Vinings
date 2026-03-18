@@ -8,13 +8,58 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
+  Crown,
+  Eye,
   Heart,
   Lightbulb,
   Lock,
   MessageCircle,
   Quote,
+  Shield,
+  Sword,
+  User,
   Zap,
 } from "lucide-react"
+
+// Worship program phases
+const WORSHIP_PHASES = [
+  {
+    name: "Perspective",
+    days: "Days 1-7",
+    description: "See God as bigger than your circumstances",
+    color: "#10b981", // teal/green
+    icon: Eye,
+    outcomes: [
+      "Shift focus from problems to God's sovereignty",
+      "Develop awe and reverence in daily life",
+      "Build trust through expanded vision",
+    ],
+  },
+  {
+    name: "Identity",
+    days: "Days 8-14",
+    description: "Understand who you are in Christ",
+    color: "#3b82f6", // blue
+    icon: User,
+    outcomes: [
+      "Anchor your identity in Christ, not circumstances",
+      "Release performance-based acceptance",
+      "Walk in confidence and spiritual authority",
+    ],
+  },
+  {
+    name: "Warfare",
+    days: "Days 15-21",
+    description: "Use worship as a spiritual weapon",
+    color: "#8b5cf6", // purple
+    icon: Sword,
+    outcomes: [
+      "Deploy worship against fear and anxiety",
+      "Break through spiritual opposition",
+      "Lead others through worship-driven victory",
+    ],
+  },
+]
 import { useState } from "react"
 
 interface WorshipLesson {
@@ -165,21 +210,21 @@ export function WorshipProgramDetail({
             {[
               {
                 icon: Heart,
-                title: "Worship Leaders",
+                title: "Believers Facing Stress",
                 description:
-                  "Deepen your spiritual leadership and elevate your worship practice with practical daily frameworks.",
+                  "Learn to deploy worship as your first response to pressure, anxiety, and overwhelming circumstances.",
               },
               {
                 icon: Lightbulb,
-                title: "Spiritual Seekers",
+                title: "Decision Makers",
                 description:
-                  "Transform your personal worship journey through scriptural guidance and actionable spiritual practices.",
+                  "Gain clarity and confidence in uncertain seasons through a worship-centered approach to discernment.",
               },
               {
-                icon: Users,
-                title: "Church Communities",
+                icon: Crown,
+                title: "Spiritual Leaders",
                 description:
-                  "Build a stronger, more spiritually aligned community through shared worship transformation.",
+                  "Lead others from a posture of worship that influences how you think, respond, and guide your community.",
               },
             ].map((item, i) => {
               const Icon = item.icon
@@ -199,16 +244,89 @@ export function WorshipProgramDetail({
         </div>
       </section>
 
-      {/* Your 21-Day Worship Journey */}
+      {/* Your 21-Day Worship Journey - Phase Overview */}
+      <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12">
+            <h2 className="mb-4 text-3xl font-bold text-slate-900">
+              Your 21-Day Journey
+            </h2>
+            <p className="text-lg text-slate-600">
+              Three phases designed to transform worship into a lifestyle of power.
+            </p>
+          </div>
+
+          {/* Phase Timeline */}
+          <div className="relative">
+            {WORSHIP_PHASES.map((phase, index) => {
+              const Icon = phase.icon
+              return (
+                <div key={phase.name} className="relative flex gap-6 pb-12 last:pb-0">
+                  {/* Timeline Line */}
+                  {index < WORSHIP_PHASES.length - 1 && (
+                    <div
+                      className="absolute left-[28px] top-[56px] h-[calc(100%-56px)] w-0.5"
+                      style={{ backgroundColor: phase.color }}
+                    />
+                  )}
+
+                  {/* Icon Circle */}
+                  <div
+                    className="relative z-10 flex size-14 shrink-0 items-center justify-center rounded-full"
+                    style={{ backgroundColor: `${phase.color}20` }}
+                  >
+                    <Icon className="size-7" style={{ color: phase.color }} />
+                  </div>
+
+                  {/* Phase Content */}
+                  <div className="flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-3">
+                      <h3 className="text-2xl font-bold text-slate-900">
+                        {phase.name}
+                      </h3>
+                      <span
+                        className="rounded-full px-3 py-1 text-xs font-bold text-white"
+                        style={{ backgroundColor: phase.color }}
+                      >
+                        {phase.days}
+                      </span>
+                    </div>
+                    <p className="mb-4 text-slate-600">{phase.description}</p>
+
+                    {/* Outcome Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {phase.outcomes.map((outcome, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1.5 text-sm text-slate-700"
+                          style={{ borderColor: `${phase.color}40` }}
+                        >
+                          <CheckCircle2
+                            className="size-4"
+                            style={{ color: phase.color }}
+                          />
+                          {outcome}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Daily Curriculum */}
       <section className="px-4 py-16 sm:px-6 lg:px-8 bg-slate-50">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12">
             <h2 className="mb-4 text-3xl font-bold text-slate-900">
-              Your 21-Day Worship Journey
+              Daily Curriculum
             </h2>
             <p className="text-lg text-slate-600">
               {curriculum.length > 0
-                ? "Daily spiritual practices designed to transform how you worship and live your faith."
+                ? "Each day includes scripture, real-life scenarios, and actionable practices for stress, pressure, decision-making, and uncertainty."
                 : "Loading curriculum..."}
             </p>
           </div>
