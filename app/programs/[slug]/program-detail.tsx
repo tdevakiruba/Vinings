@@ -74,26 +74,22 @@ import { Button } from "@/components/ui/button"
 /* ── Types ── */
 interface Program {
   id: string
-  name: string
+  title: string
   slug: string
   tagline: string
-  short_description: string
-  long_description: string | null
-  audience: string
-  duration: string
-  color: string
-  badge: string | null
-  icon: string | null
-  hero_image: string | null
+  description: string | null
+  audience: string | null
+  duration: string | null
+  image_url: string | null
   leaders: string[] | null
   [key: string]: unknown
 }
 
 interface Feature {
   id: string
-  title: string
-  description: string
-  icon: string
+  program_id: string
+  feature: string
+  sort_order: number | null
 }
 
 interface Phase {
@@ -284,6 +280,8 @@ export function ProgramDetail({
       />
     )
   }
+
+  // Otherwise render standard program detail
   const router = useRouter()
   const [enrollingTier, setEnrollingTier] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
@@ -362,7 +360,7 @@ export function ProgramDetail({
               {heroIcon && (
                 <Image
                   src={heroIcon}
-                  alt={`${program.name} icon`}
+                  alt={`${program.title} icon`}
                   width={128}
                   height={128}
                   className="size-20 shrink-0 sm:size-auto"
@@ -372,7 +370,7 @@ export function ProgramDetail({
               {heroLogo ? (
                 <Image
                   src={heroLogo}
-                  alt={program.name}
+                  alt={program.title}
                   width={440}
                   height={96}
                   className="h-auto w-[80%] max-w-[440px] sm:w-auto"
@@ -380,18 +378,17 @@ export function ProgramDetail({
                 />
               ) : (
                 <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                  {program.name}
+                  {program.title}
                 </h1>
               )}
             </div>
 
             {/* Duration badge */}
             <span
-              className="mb-6 inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-base font-bold text-white"
-              style={{ backgroundColor: program.color || "#00c892" }}
+              className="mb-6 inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-base font-bold text-white bg-teal-600"
             >
               <Clock className="size-5" />
-              {program.duration}-Day Program
+              {program.duration || "21"}-Day Program
             </span>
 
             {/* Tagline */}
@@ -402,23 +399,20 @@ export function ProgramDetail({
             )}
 
             {/* Description */}
-            <p className="mt-4 max-w-3xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              {program.long_description || program.short_description}
-            </p>
+            {program.description && (
+              <p className="mt-4 max-w-3xl text-pretty text-lg leading-relaxed text-muted-foreground sm:text-xl">
+                {program.description}
+              </p>
+            )}
 
             {/* Key outcomes pills */}
             <div className="mt-6 flex flex-wrap gap-3">
               {features.slice(0, 3).map((f) => (
                 <span
                   key={f.id}
-                  className="rounded-full border-2 px-5 py-2 text-base font-bold"
-                  style={{
-                    borderColor: `${program.color || "#00c892"}40`,
-                    color: program.color || "#00c892",
-                    backgroundColor: `${program.color || "#00c892"}08`,
-                  }}
+                  className="rounded-full border-2 border-teal-200 bg-teal-50 px-5 py-2 text-base font-bold text-teal-700"
                 >
-                  {f.title}
+                  {f.feature || f.title}
                 </span>
               ))}
             </div>
@@ -429,8 +423,7 @@ export function ProgramDetail({
                 <Button
                   asChild
                   size="lg"
-                  className="h-14 rounded-xl px-10 text-lg font-bold text-white"
-                  style={{ backgroundColor: program.color || "#00c892" }}
+                  className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-teal-600 hover:bg-teal-700"
                 >
                   <Link href={`/dashboard/${program.slug}`}>Go to Dashboard</Link>
                 </Button>
