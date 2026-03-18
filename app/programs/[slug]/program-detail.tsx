@@ -23,6 +23,7 @@ import {
   Zap,
 } from "lucide-react"
 import { WorshipProgramDetail } from "./worship-program-detail"
+import { Button } from "@/components/ui/button"
 
 /* ── 3-Phase definitions ── */
 const PROGRAM_PHASES = [
@@ -69,7 +70,6 @@ const PROGRAM_PHASES = [
     ],
   },
 ]
-import { Button } from "@/components/ui/button"
 
 /* ── Types ── */
 interface Program {
@@ -94,10 +94,11 @@ interface Feature {
 
 interface Phase {
   id: string
+  program_id: string
   name: string
-  letter: string | null
-  description: string
+  description: string | null
   days: string | null
+  sort_order: number | null
 }
 
 interface PricingTier {
@@ -445,16 +446,13 @@ export function ProgramDetail({
               )}
               {!isLoggedIn && (
                 <>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="rounded-xl px-8"
-                  >
-                    <Link href={`/signin?redirect=/programs/${program.slug}`}>
-                      Sign In
-                    </Link>
-                  </Button>
+            <Button
+              asChild
+              size="lg"
+              className="h-14 rounded-xl px-10 text-lg font-bold text-white bg-teal-600 hover:bg-teal-700"
+            >
+              <Link href={`/dashboard/${program.slug}`}>Go to Dashboard</Link>
+            </Button>
                   <Button
                     asChild
                     size="lg"
@@ -692,13 +690,12 @@ export function ProgramDetail({
                     <div
                       className="flex size-12 items-center justify-center rounded-xl"
                       style={{
-                        backgroundColor:
-                          (program.color || "#00c892") + "18",
+                        backgroundColor: "#00c89218",
                       }}
                     >
                       <step.icon
                         className="size-6"
-                        style={{ color: program.color || "#00c892" }}
+                        style={{ color: "#00c892" }}
                       />
                     </div>
                     <div>
