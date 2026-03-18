@@ -78,10 +78,10 @@
   --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
   --font-serif: 'DM Sans', 'DM Sans Fallback', system-ui, sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback', monospace;
-  --color-wf-mint: #00c892;
-  --color-wf-mint-light: #00dba0;
-  --color-wf-dark: #002b5c;
-  --color-wf-bg: #f4faf8;
+  --color-vc-blue: #1e3a8a;
+  --color-vc-blue-light: #3b82f6;
+  --color-vc-blue-dark: #0f172a;
+  --color-vc-bg: #f8fafc;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

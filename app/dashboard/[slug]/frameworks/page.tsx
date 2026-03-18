@@ -16,16 +16,16 @@ export default async function FrameworksPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("programs")
-    .select("id, slug, name, color, badge, duration")
+    .from("vc_programs")
+    .select("id, slug, title, duration")
     .eq("slug", slug)
     .single()
 
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("enrollments")
-    .select("id, current_day, started_at")
+    .from("vc_enrollments")
+    .select("id, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
     .eq("status", "active")
@@ -36,8 +36,8 @@ export default async function FrameworksPage({
   const durationMatch = program.duration?.match(/(\d+)/)
   const totalDays = durationMatch ? parseInt(durationMatch[1], 10) : 21
   let currentDay = 1
-  if (enrollment.started_at) {
-    const start = new Date(enrollment.started_at)
+  if (enrollment.enrolled_at) {
+    const start = new Date(enrollment.enrolled_at)
     const now = new Date()
     const diffDays = Math.floor(
       (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
@@ -49,22 +49,23 @@ export default async function FrameworksPage({
   let curriculum: {
     day_number: number
     title: string
-    key_theme: string | null
+    theme: string | null
   }[] = []
 
-  if (slug === "workforce-ready") {
+  if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
-      .from("workforce_mindset_21day")
-      .select("day_number, title, key_theme")
+      .from("vc_workforce_mindset_21day")
+      .select("day_number, title, theme")
       .order("day_number")
     curriculum = days ?? []
   }
 
   // Fetch user action completions per day
   const { data: userActions } = await supabase
-    .from("user_actions")
-    .select("day_number, completed")
-    .eq("enrollment_id", enrollment.id)
+    .from("vc_user_actions")
+    .select("action_type, action_data")
+    .eq("user_id", user.id)
+    .eq("program_id", program.id)
 
   // Build completion map
   const completionMap: Record<number, { total: number; done: number }> = {}
@@ -80,9 +81,9 @@ export default async function FrameworksPage({
     <FrameworksClient
       program={{
         slug: program.slug,
-        name: program.name,
-        badgeColor: program.color ?? "#00c892",
-        signalAcronym: program.badge ?? "",
+        name: program.title,
+        badgeColor: "#00c892",
+        signalAcronym: "",
         totalDays,
       }}
       currentDay={currentDay}

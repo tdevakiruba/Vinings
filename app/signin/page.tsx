@@ -78,11 +78,11 @@ function SignInForm() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-wf-bg px-4 py-16">
+    <div className="flex items-center justify-center bg-slate-50 px-4 py-16">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Sign in to your Transformer Hub account</p>
+          <p className="mt-1 text-sm text-muted-foreground">Sign in to your Vinings Church account</p>
         </div>
 
         <div className="rounded-2xl border bg-card p-6 shadow-sm">
@@ -146,9 +146,14 @@ function SignInForm() {
                 />
               </div>
               <div>
-                <Label htmlFor="password" className="text-sm font-medium text-card-foreground">
-                  Password
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium text-card-foreground">
+                    Password
+                  </Label>
+                  <Link href="/forgot-password" className="text-xs font-medium text-blue-900 hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
                 <Input
                   id="password"
                   type="password"
@@ -167,18 +172,18 @@ function SignInForm() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="mt-5 w-full rounded-xl bg-wf-mint py-5 font-semibold text-white hover:bg-wf-mint-light"
-            >
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-blue-900 py-5 font-semibold text-white hover:bg-blue-800"
+              >
               {loading ? <Loader2 className="size-4 animate-spin" /> : "Sign In"}
             </Button>
           </form>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
             {"Don't have an account? "}
-            <Link href="/signup" className="font-medium text-wf-mint hover:underline">
+            <Link href="/signup" className="font-medium text-blue-900 hover:underline">
               Sign Up
             </Link>
           </p>
@@ -191,8 +196,8 @@ function SignInForm() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center bg-wf-bg py-32">
-        <Loader2 className="size-6 animate-spin text-wf-mint" />
+      <div className="flex items-center justify-center bg-slate-50 py-32">
+        <Loader2 className="size-6 animate-spin text-blue-900" />
       </div>
     }>
       <SignInForm />

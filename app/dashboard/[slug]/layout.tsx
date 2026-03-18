@@ -10,13 +10,13 @@ export async function generateMetadata({
   const { slug } = await params
   const supabase = await createClient()
   const { data: program } = await supabase
-    .from("programs")
-    .select("name")
+    .from("vc_programs")
+    .select("title")
     .eq("slug", slug)
     .maybeSingle()
 
   return {
-    title: program ? `${program.name} | Dashboard` : "Dashboard",
+    title: program ? `${program.title} | Dashboard` : "Dashboard",
   }
 }
 
@@ -38,8 +38,8 @@ export default async function ProductDashboardLayout({
 
   // Fetch program
   const { data: program } = await supabase
-    .from("programs")
-    .select("id, slug, name, tagline, color, badge, duration, audience")
+    .from("vc_programs")
+    .select("id, slug, title, tagline, duration")
     .eq("slug", slug)
     .maybeSingle()
 
@@ -47,8 +47,8 @@ export default async function ProductDashboardLayout({
 
   // Verify active enrollment
   const { data: enrollment } = await supabase
-    .from("enrollments")
-    .select("id, status, current_day, started_at")
+    .from("vc_enrollments")
+    .select("id, status, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
     .eq("status", "active")
@@ -60,10 +60,9 @@ export default async function ProductDashboardLayout({
 
   // Get subscription info
   const { data: subscription } = await supabase
-    .from("subscriptions")
-    .select("plan_tier, current_period_start, current_period_end")
+    .from("vc_subscriptions")
+    .select("plan_type, current_period_start, current_period_end")
     .eq("user_id", user.id)
-    .eq("program_id", program.id)
     .eq("status", "active")
     .maybeSingle()
 
@@ -71,9 +70,9 @@ export default async function ProductDashboardLayout({
   // Parse duration like "21 days" or just use 21 as default
   const durationMatch = program.duration?.match(/(\d+)/)
   const totalDays = durationMatch ? parseInt(durationMatch[1], 10) : 21
-  let currentDay = enrollment.current_day ?? 1
-  if (enrollment.started_at) {
-    const start = new Date(enrollment.started_at)
+  let currentDay = 1
+  if (enrollment.enrolled_at) {
+    const start = new Date(enrollment.enrolled_at)
     const now = new Date()
     const diffDays = Math.floor(
       (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
@@ -87,19 +86,19 @@ export default async function ProductDashboardLayout({
     <ProductDashboardShell
       program={{
         slug: program.slug,
-        name: program.name,
+        name: program.title,
         tagline: program.tagline,
-        badgeColor: program.color ?? "#00c892",
-        signalAcronym: program.badge ?? "",
+        badgeColor: "#00c892",
+        signalAcronym: "",
       }}
       enrollment={{
         id: enrollment.id,
         currentDay,
         totalDays,
         progress,
-        startDate: enrollment.started_at,
+        startDate: enrollment.enrolled_at,
         endDate: subscription?.current_period_end ?? null,
-        planTier: subscription?.plan_tier ?? "individual",
+        planTier: subscription?.plan_type ?? "free",
       }}
     >
       {children}

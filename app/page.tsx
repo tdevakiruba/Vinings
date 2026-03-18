@@ -3,21 +3,19 @@ import Link from "next/link"
 import {
   ArrowRight,
   Brain,
-  CheckCircle2,
   ChevronRight,
   Clock,
   Sparkles,
-  Star,
   Target,
   Users,
   Award,
   Zap,
   TrendingUp,
   Shield,
+  CheckCircle2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { HeroAnimation } from "@/components/hero-animation"
-import { ProgramCard } from "@/components/program-card"
 
 export default async function Home() {
   let programs: any[] | null = null
@@ -29,7 +27,7 @@ export default async function Home() {
     const supabase = await createClient()
 
     const { data: programsData } = await supabase
-      .from("programs")
+      .from("vc_programs")
       .select("*")
       .eq("is_active", true)
       .order("sort_order")
@@ -37,7 +35,7 @@ export default async function Home() {
     programs = programsData
 
     const { data: categoriesData } = await supabase
-      .from("categories")
+      .from("vc_categories")
       .select("*")
       .order("sort_order")
 
@@ -47,12 +45,12 @@ export default async function Home() {
 
     const [{ data: featuresData }, { data: pricingData }] = await Promise.all([
       supabase
-        .from("program_features")
+        .from("vc_program_features")
         .select("*")
         .in("program_id", programIds)
         .order("sort_order"),
       supabase
-        .from("program_pricing")
+        .from("vc_program_pricing")
         .select("*")
         .in("program_id", programIds)
         .order("sort_order"),
@@ -68,25 +66,24 @@ export default async function Home() {
     <>
       {/* ──── CINEMATIC HERO ──── */}
       <section className="relative overflow-hidden bg-[#0a0e14] px-4 py-24 sm:px-6 lg:px-8 lg:py-36">
-        {/* Animated background */}
         <HeroAnimation />
 
         <div className="relative z-10 mx-auto max-w-5xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-semibold tracking-wider text-white/80 uppercase backdrop-blur-md">
-            <Sparkles className="size-4 text-[#00c892]" />
-            Transformer Hub Institute
+            <Sparkles className="size-4 text-blue-400" />
+            Vinings Church
           </div>
 
           <h1 className="font-serif text-balance text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
             Leadership is not taught.{" "}
-            <span className="bg-gradient-to-r from-[#00c892] to-[#00a5ff] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
               It is built.
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-xl leading-relaxed text-white/60">
             Structured, research-backed programs that turn ambition into
-            professional excellence -- from emerging talent to senior
+            professional excellence — from emerging talent to senior
             executives.
           </p>
 
@@ -94,7 +91,7 @@ export default async function Home() {
             <Button
               asChild
               size="lg"
-              className="rounded-full bg-[#00c892] px-8 py-6 text-base font-bold text-white shadow-lg shadow-[#00c892]/20 transition-all hover:bg-[#00e0a4] hover:shadow-xl hover:shadow-[#00c892]/30"
+              className="rounded-full bg-blue-900 px-8 py-6 text-base font-bold text-white shadow-lg shadow-blue-900/30 transition-all hover:bg-blue-800 hover:shadow-xl"
             >
               <Link href="/programs">
                 Explore Programs
@@ -137,9 +134,9 @@ export default async function Home() {
       {categories && categories.length > 0 && (
         <section className="sticky top-0 z-30 border-b border-border/50 bg-background/80 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-2">
-              <Link
+            <Link
               href="/programs"
-              className="rounded-full bg-[#00c892] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:shadow-md"
+              className="rounded-full bg-blue-900 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-blue-800 hover:shadow-md"
             >
               All Programs
             </Link>
@@ -147,7 +144,7 @@ export default async function Home() {
               <Link
                 key={cat.id}
                 href={`/programs?category=${cat.slug}`}
-                className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:border-[#00c892]/50 hover:bg-[#00c892]/5 hover:text-foreground"
+                className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-900"
               >
                 {cat.label}
               </Link>
@@ -161,14 +158,14 @@ export default async function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-[#00c892]">
+              <p className="text-sm font-bold uppercase tracking-widest text-blue-900">
                 Our Programs
               </p>
               <h2 className="mt-2 font-serif text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
                 Choose your transformation
               </h2>
               <p className="mt-3 max-w-lg text-base leading-relaxed text-muted-foreground">
-                Each program is a structured journey -- daily frameworks, real
+                Each program is a structured journey — daily frameworks, real
                 actions, and measurable growth.
               </p>
             </div>
@@ -184,19 +181,86 @@ export default async function Home() {
             </Button>
           </div>
 
+          {/* Program Cards — ink blue tile format */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {programs?.map((program) => (
-              <ProgramCard
-                key={program.id}
-                program={program}
-                features={
-                  features?.filter((f) => f.program_id === program.id) ?? []
-                }
-                pricing={
-                  pricing?.filter((p) => p.program_id === program.id) ?? []
-                }
-              />
-            ))}
+            {programs?.map((program) => {
+              const pFeatures = (features ?? [])
+                .filter((f: any) => f.program_id === program.id)
+                .slice(0, 3)
+              const pPricing = (pricing ?? []).filter(
+                (p: any) => p.program_id === program.id
+              )
+              const basePrice = pPricing.find((p: any) => p.price_cents)
+
+              return (
+                <Link
+                  key={program.id}
+                  href={`/programs/${program.slug}`}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/5"
+                >
+                  {/* Ink blue top accent bar */}
+                  <div className="h-1 bg-blue-900" />
+
+                  <div className="flex flex-col p-6">
+                    {/* Badge + Duration */}
+                    <div className="mb-4 flex items-center justify-between">
+                      <span className="inline-flex items-center rounded-full bg-blue-900 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                        {program.title?.split(" ")[0]}-Badge
+                      </span>
+                      {program.duration && (
+                        <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                          <Clock className="size-3.5" />
+                          {program.duration}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-blue-900">
+                      {program.title || program.name}
+                    </h3>
+
+                    {/* Tagline */}
+                    {(program.tagline) && (
+                      <p className="mt-1 text-sm font-semibold text-blue-900">
+                        {program.tagline}
+                      </p>
+                    )}
+
+                    {/* Description */}
+                    {program.description && (
+                      <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                        {program.description}
+                      </p>
+                    )}
+
+                    {/* Features */}
+                    {pFeatures.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {pFeatures.map((feat: any) => (
+                          <div
+                            key={feat.id}
+                            className="flex items-start gap-2 text-sm text-slate-700"
+                          >
+                            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-blue-700" />
+                            <span>{feat.feature || feat.title}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                      <span className="text-sm text-slate-500">Contact Us</span>
+                      <span className="flex items-center gap-1 text-sm font-bold text-blue-900 transition-all group-hover:gap-2">
+                        Learn More
+                        <ChevronRight className="size-4" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -205,7 +269,7 @@ export default async function Home() {
       <section className="border-t bg-[#0a0e14] px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
-            <p className="text-sm font-bold uppercase tracking-widest text-[#00c892]">
+            <p className="text-sm font-bold uppercase tracking-widest text-blue-400">
               How It Works
             </p>
             <h2 className="mt-2 font-serif text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
@@ -225,7 +289,7 @@ export default async function Home() {
                 step: "02",
                 icon: Zap,
                 title: "Daily Frameworks",
-                desc: "Each day delivers a structured Read, Reflect, Act framework -- 15 minutes that compound.",
+                desc: "Each day delivers a structured Read, Reflect, Act framework — 15 minutes that compound.",
               },
               {
                 step: "03",
@@ -236,13 +300,13 @@ export default async function Home() {
             ].map((item) => (
               <div
                 key={item.step}
-                className="group relative rounded-2xl border border-white/5 bg-white/[0.02] p-8 transition-all hover:border-[#00c892]/20 hover:bg-white/[0.04]"
+                className="group relative rounded-2xl border border-white/5 bg-white/[0.02] p-8 transition-all hover:border-blue-800/40 hover:bg-white/[0.04]"
               >
                 <span className="absolute right-6 top-6 text-4xl font-black text-white/5">
                   {item.step}
                 </span>
-                <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-[#00c892]/10">
-                  <item.icon className="size-5 text-[#00c892]" />
+                <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-blue-900/20">
+                  <item.icon className="size-5 text-blue-400" />
                 </div>
                 <h3 className="font-serif text-xl font-bold text-white">{item.title}</h3>
                 <p className="mt-2 text-base leading-relaxed text-white/50">
@@ -254,11 +318,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ──── WHY THI ──── */}
+      {/* ──── WHY VININGS CHURCH ──── */}
       <section className="border-t px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl text-center">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#00c892]">
-            Why Transformer Hub
+          <p className="text-sm font-bold uppercase tracking-widest text-blue-900">
+            Why Vinings Church
           </p>
           <h2 className="mt-2 font-serif text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
             Built different. By design.
@@ -292,10 +356,10 @@ export default async function Home() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="group rounded-2xl border bg-card p-6 transition-all hover:shadow-lg hover:shadow-[#00c892]/5"
+                className="group rounded-2xl border bg-card p-6 transition-all hover:shadow-lg hover:shadow-blue-900/5 hover:border-blue-200"
               >
-                <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-[#00c892]/10 transition-colors group-hover:bg-[#00c892]/20">
-                  <item.icon className="size-5 text-[#00c892]" />
+                <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-blue-100 transition-colors group-hover:bg-blue-200">
+                  <item.icon className="size-5 text-blue-900" />
                 </div>
                 <h3 className="font-serif text-base font-bold text-card-foreground">
                   {item.title}
@@ -311,8 +375,8 @@ export default async function Home() {
 
       {/* ──── CTA BANNER ──── */}
       <section className="border-t bg-[#0a0e14] px-4 py-20 sm:px-6 lg:px-8">
-        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#00c892]/10 via-transparent to-[#00a5ff]/10 px-8 py-14 text-center sm:px-14">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(0,200,146,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(0,165,255,0.08),transparent_50%)]" />
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-blue-900/20 via-transparent to-blue-600/10 px-8 py-14 text-center sm:px-14">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(30,58,138,0.15),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(59,130,246,0.1),transparent_50%)]" />
           <div className="relative">
             <h2 className="font-serif text-balance text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
               Ready to lead differently?
@@ -325,7 +389,7 @@ export default async function Home() {
               <Button
                 asChild
                 size="lg"
-                className="rounded-full bg-[#00c892] px-8 py-6 text-base font-bold text-white shadow-lg shadow-[#00c892]/20 hover:bg-[#00e0a4]"
+                className="rounded-full bg-blue-900 px-8 py-6 text-base font-bold text-white shadow-lg shadow-blue-900/30 hover:bg-blue-800"
               >
                 <Link href="/programs">Browse Programs</Link>
               </Button>

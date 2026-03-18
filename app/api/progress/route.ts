@@ -13,28 +13,21 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { enrollmentId, dayNumber, actionIndex, completed } = body
+  const { programId, actionType, actionData } = body
 
-  if (!enrollmentId || dayNumber == null || actionIndex == null) {
+  if (!programId || !actionType) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 })
   }
 
-  // Upsert action progress
+  // Insert action progress
   const { error } = await supabase
-    .from("user_actions")
-    .upsert(
-      {
-        user_id: user.id,
-        enrollment_id: enrollmentId,
-        day_number: dayNumber,
-        action_index: actionIndex,
-        completed: !!completed,
-        completed_at: completed ? new Date().toISOString() : null,
-      },
-      {
-        onConflict: "enrollment_id,day_number,action_index",
-      }
-    )
+    .from("vc_user_actions")
+    .insert({
+      user_id: user.id,
+      program_id: programId,
+      action_type: actionType,
+      action_data: actionData ?? {},
+    })
 
   if (error) {
     console.error("Upsert action error:", error)

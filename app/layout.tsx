@@ -9,8 +9,8 @@ const _inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: {
-    default: "Transformer Hub Institute | Leadership Development Platform",
-    template: "%s | Transformer Hub Institute",
+    default: "Vinings Church | Leadership Development Platform",
+    template: "%s | Vinings Church",
   },
   description:
     "Structured, research-backed leadership programs for executives, students, faith leaders, youth, and enterprise teams.",

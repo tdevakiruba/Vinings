@@ -4,7 +4,7 @@ import { DashboardClient } from "./dashboard-client"
 
 export const metadata = {
   title: "Dashboard",
-  description: "Your Transformer Hub Institute learning dashboard",
+  description: "Your Vinings Church learning dashboard",
 }
 
 export default async function DashboardPage() {
@@ -18,36 +18,33 @@ export default async function DashboardPage() {
 
   // Get profile
   const { data: profile } = await supabase
-    .from("profiles")
+    .from("vc_profiles")
     .select("first_name, last_name")
     .eq("id", user.id)
     .maybeSingle()
 
   // Get ALL active subscriptions for this user
   const { data: subscriptions } = await supabase
-    .from("subscriptions")
+    .from("vc_subscriptions")
     .select("*")
     .eq("user_id", user.id)
     .eq("status", "active")
 
   // Get ALL active enrollments with their program data
   const { data: enrollments } = await supabase
-    .from("enrollments")
-    .select("*, programs(id, slug, name, tagline, audience, duration, color, badge)")
+    .from("vc_enrollments")
+    .select("*, vc_programs(id, slug, title, tagline, duration)")
     .eq("user_id", user.id)
     .eq("status", "active")
 
   // Build journey data for each enrollment
   const journeys = (enrollments ?? []).map((enrollment) => {
-    const program = enrollment.programs as {
+    const program = enrollment.vc_programs as {
       id: string
       slug: string
-      name: string
+      title: string
       tagline: string
-      audience: string
       duration: string
-      color: string
-      badge: string
     } | null
 
     const sub = subscriptions?.find(
@@ -69,15 +66,15 @@ export default async function DashboardPage() {
     return {
       enrollmentId: enrollment.id,
       programId: enrollment.program_id,
-      programName: program?.name ?? "Unknown Program",
+      programName: program?.title ?? "Unknown Program",
       programSlug: program?.slug ?? "",
       tagline: program?.tagline ?? "",
-      audience: program?.audience ?? "",
-      badgeColor: program?.color ?? "#00c892",
-      signalAcronym: program?.badge ?? "",
+      audience: "",
+      badgeColor: "#00c892",
+      signalAcronym: "",
       currentDay,
       totalDays,
-      startDate: enrollment.started_at || sub?.current_period_start,
+      startDate: enrollment.enrolled_at || sub?.current_period_start,
       endDate: sub?.current_period_end,
       progress: Math.round((currentDay / totalDays) * 100),
     }
@@ -85,8 +82,8 @@ export default async function DashboardPage() {
 
   // Get all programs for "Discover more" section
   const { data: allPrograms } = await supabase
-    .from("programs")
-    .select("id, name, slug, tagline, duration, color, badge, audience")
+    .from("vc_programs")
+    .select("id, title, slug, tagline, duration")
     .eq("is_active", true)
     .order("sort_order")
 

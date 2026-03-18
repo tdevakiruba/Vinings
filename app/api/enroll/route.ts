@@ -24,8 +24,8 @@ export async function POST(request: Request) {
 
   // Get program (include duration for dynamic subscription length)
   const { data: program, error: programError } = await supabase
-    .from("programs")
-    .select("id, slug, name, duration")
+    .from("vc_programs")
+    .select("id, slug, title, duration")
     .eq("slug", programSlug)
     .single()
 
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   // Check if already enrolled
   const { data: existingEnrollment } = await supabase
-    .from("enrollments")
+    .from("vc_enrollments")
     .select("id")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   if (existingEnrollment) {
     // Check if subscription exists
     const { data: existingSub } = await supabase
-      .from("subscriptions")
+      .from("vc_subscriptions")
       .select("id, status")
       .eq("user_id", user.id)
       .eq("program_id", program.id)
@@ -63,14 +63,10 @@ export async function POST(request: Request) {
   endDate.setDate(endDate.getDate() + durationDays)
 
   // Create subscription record
-  const { error: subError } = await supabase.from("subscriptions").insert({
+  const { error: subError } = await supabase.from("vc_subscriptions").insert({
     user_id: user.id,
-    program_id: program.id,
-    plan_tier: planTier,
+    plan_type: planTier === "individual" ? "basic" : "pro",
     status: "active",
-    amount_cents: planTier === "individual" ? 2900 : null,
-    currency: "usd",
-    interval: "one_time",
     current_period_start: now.toISOString(),
     current_period_end: endDate.toISOString(),
   })
@@ -83,11 +79,11 @@ export async function POST(request: Request) {
   // Create enrollment (or reactivate existing)
   if (existingEnrollment) {
     const { error: updateError } = await supabase
-      .from("enrollments")
+      .from("vc_enrollments")
       .update({
         status: "active",
-        current_day: 1,
-        started_at: now.toISOString(),
+        progress_percentage: 0,
+        enrolled_at: now.toISOString(),
         completed_at: null,
         updated_at: now.toISOString(),
       })
@@ -102,13 +98,13 @@ export async function POST(request: Request) {
   }
 
   const { data: enrollment, error: enrollError } = await supabase
-    .from("enrollments")
+    .from("vc_enrollments")
     .insert({
       user_id: user.id,
       program_id: program.id,
       status: "active",
-      current_day: 1,
-      started_at: now.toISOString(),
+      progress_percentage: 0,
+      enrolled_at: now.toISOString(),
     })
     .select("id")
     .single()
@@ -119,13 +115,12 @@ export async function POST(request: Request) {
   }
 
   // Create streak record
-  await supabase.from("user_streaks").insert({
+  await supabase.from("vc_user_streaks").upsert({
     user_id: user.id,
-    enrollment_id: enrollment.id,
     current_streak: 0,
     longest_streak: 0,
     last_activity_date: now.toISOString().split("T")[0],
-  })
+  }, { onConflict: "user_id" })
 
   return NextResponse.json({
     message: "Enrolled successfully",

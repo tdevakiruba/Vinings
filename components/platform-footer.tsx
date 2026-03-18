@@ -22,15 +22,12 @@ export function PlatformFooter() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-wf-mint">
-                <TrendingUp className="size-4 text-white" />
+              <div className="flex size-8 items-center justify-center rounded-lg bg-blue-900">
+                <span className="text-xs font-bold text-white">VC</span>
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-sm font-bold text-foreground">
-                  Transformer Hub
-                </span>
-                <span className="text-[9px] font-semibold tracking-wider text-wf-mint uppercase">
-                  Institute
+                  Vinings Church
                 </span>
               </div>
             </Link>
@@ -64,7 +61,7 @@ export function PlatformFooter() {
 
         <div className="mt-10 border-t pt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Transformer Hub Institute. All
+            &copy; {new Date().getFullYear()} Vinings Church. All
             rights reserved.
           </p>
         </div>

@@ -16,16 +16,16 @@ export default async function CertificatesPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("programs")
-    .select("id, slug, name, color, badge, duration")
+    .from("vc_programs")
+    .select("id, slug, title, duration")
     .eq("slug", slug)
     .single()
 
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("enrollments")
-    .select("id, current_day, started_at")
+    .from("vc_enrollments")
+    .select("id, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
     .eq("status", "active")
@@ -36,8 +36,8 @@ export default async function CertificatesPage({
   const durationMatch = program.duration?.match(/(\d+)/)
   const totalDays = durationMatch ? parseInt(durationMatch[1], 10) : 21
   let currentDay = 1
-  if (enrollment.started_at) {
-    const start = new Date(enrollment.started_at)
+  if (enrollment.enrolled_at) {
+    const start = new Date(enrollment.enrolled_at)
     const now = new Date()
     currentDay = Math.min(
       Math.max(
@@ -50,21 +50,21 @@ export default async function CertificatesPage({
 
   // Fetch phases for milestone certificates
   const { data: phases } = await supabase
-    .from("program_phases")
-    .select("phase_number, title, day_start, day_end")
+    .from("vc_program_phases")
+    .select("phase_number, title, duration")
     .eq("program_id", program.id)
     .order("sort_order")
 
   // Build certificates data
-  const certificates = (phases ?? []).map((phase) => {
-    const dayEnd = phase.day_end ?? totalDays
+  const certificates = (phases ?? []).map((phase, index) => {
+    const dayEnd = (index + 1) * 7 // Each phase is roughly 7 days
     const isEarned = currentDay > dayEnd
     return {
       id: `phase-${phase.phase_number}`,
       title: `${phase.title} Mastery`,
-      description: `Completed Phase ${phase.phase_number}: ${phase.title} (Days ${phase.day_start ?? 1}-${dayEnd})`,
+      description: `Completed Phase ${phase.phase_number}: ${phase.title}`,
       isEarned,
-      earnedDate: isEarned ? enrollment.started_at : null,
+      earnedDate: isEarned ? enrollment.enrolled_at : null,
       phaseNumber: phase.phase_number,
     }
   })
@@ -73,10 +73,10 @@ export default async function CertificatesPage({
   const programComplete = currentDay >= totalDays
   certificates.push({
     id: "program-complete",
-    title: `${program.name} -- Program Completion`,
-    description: `Successfully completed the entire ${totalDays}-day ${program.name} program.`,
+    title: `${program.title} -- Program Completion`,
+    description: `Successfully completed the entire ${totalDays}-day ${program.title} program.`,
     isEarned: programComplete,
-    earnedDate: programComplete ? enrollment.started_at : null,
+    earnedDate: programComplete ? enrollment.enrolled_at : null,
     phaseNumber: (phases?.length ?? 0) + 1,
   })
 
@@ -84,9 +84,9 @@ export default async function CertificatesPage({
     <CertificatesClient
       program={{
         slug: program.slug,
-        name: program.name,
-        badgeColor: program.color ?? "#00c892",
-        signalAcronym: program.badge ?? "",
+        name: program.title,
+        badgeColor: "#00c892",
+        signalAcronym: "",
         totalDays,
       }}
       currentDay={currentDay}

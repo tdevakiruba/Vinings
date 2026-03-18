@@ -17,16 +17,16 @@ export default async function JourneyPage({
   if (!user) redirect("/signin")
 
   const { data: program } = await supabase
-    .from("programs")
-    .select("id, slug, name, color, badge, duration")
+    .from("vc_programs")
+    .select("id, slug, title, duration")
     .eq("slug", slug)
     .single()
 
   if (!program) redirect("/dashboard")
 
   const { data: enrollment } = await supabase
-    .from("enrollments")
-    .select("id, current_day, started_at")
+    .from("vc_enrollments")
+    .select("id, progress_percentage, enrolled_at")
     .eq("user_id", user.id)
     .eq("program_id", program.id)
     .eq("status", "active")
@@ -38,8 +38,8 @@ export default async function JourneyPage({
   const durationMatch = program.duration?.match(/(\d+)/)
   const totalDays = durationMatch ? parseInt(durationMatch[1], 10) : 21
   let currentDay = 1
-  if (enrollment.started_at) {
-    const start = new Date(enrollment.started_at)
+  if (enrollment.enrolled_at) {
+    const start = new Date(enrollment.enrolled_at)
     const now = new Date()
     const diffDays = Math.floor(
       (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
@@ -47,21 +47,21 @@ export default async function JourneyPage({
     currentDay = Math.min(Math.max(diffDays + 1, 1), totalDays)
   }
 
-  // Fetch curriculum (for now only workforce-ready has content)
+  // Fetch curriculum (for now only workforce-mindset-21-day has content)
   let curriculum: {
     day_number: number
     title: string
-    key_theme: string | null
-    motivational_keynote: string[] | null
-    how_to_implement: string[] | null
-    three_actions: { action_title: string; instruction: string }[] | null
+    theme: string | null
+    overview: string | null
+    main_content: string | null
+    exercises: any[] | null
   }[] = []
 
-  if (slug === "workforce-ready") {
+  if (slug === "workforce-mindset-21-day") {
     const { data: days } = await supabase
-      .from("workforce_mindset_21day")
+      .from("vc_workforce_mindset_21day")
       .select(
-        "day_number, title, key_theme, motivational_keynote, how_to_implement, three_actions"
+        "day_number, title, theme, overview, main_content, exercises"
       )
       .order("day_number")
     curriculum = days ?? []
@@ -69,17 +69,18 @@ export default async function JourneyPage({
 
   // Fetch user action progress
   const { data: userActions } = await supabase
-    .from("user_actions")
-    .select("day_number, action_index, completed")
-    .eq("enrollment_id", enrollment.id)
+    .from("vc_user_actions")
+    .select("action_type, action_data, created_at")
+    .eq("user_id", user.id)
+    .eq("program_id", program.id)
 
   return (
     <JourneyClient
       program={{
         slug: program.slug,
-        name: program.name,
-        badgeColor: program.color ?? "#00c892",
-        signalAcronym: program.badge ?? "",
+        name: program.title,
+        badgeColor: "#00c892",
+        signalAcronym: "",
         totalDays,
       }}
       enrollmentId={enrollment.id}

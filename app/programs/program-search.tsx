@@ -2,28 +2,26 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import {
   CheckCircle2,
   ChevronRight,
   Clock,
   Search,
-  Users,
   X,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 interface Program {
   id: string
-  name: string
+  title: string
   slug: string
   tagline: string
-  description: string
-  audience: string
-  duration: string
-  color: string
-  badge: string
+  description: string | null
+  duration: string | null
   category_id: string | null
+  image_url: string | null
   [key: string]: unknown
 }
 
@@ -36,14 +34,14 @@ interface Category {
 interface Feature {
   id: string
   program_id: string
-  title: string
+  feature: string
 }
 
 interface Pricing {
   id: string
   program_id: string
-  price: number | null
-  label: string
+  price_cents: number | null
+  tier_name: string
 }
 
 export function ProgramSearch({
@@ -79,10 +77,9 @@ export function ProgramSearch({
       const q = query.toLowerCase()
       result = result.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
+          p.title.toLowerCase().includes(q) ||
           p.tagline.toLowerCase().includes(q) ||
-          p.audience.toLowerCase().includes(q) ||
-          p.description?.toLowerCase().includes(q)
+          (p.description?.toLowerCase() || "").includes(q)
       )
     }
 
@@ -99,160 +96,195 @@ export function ProgramSearch({
     })
   }
 
+  const featuredCategory = categories.find((c) => c.slug === activeCategory) || categories[0]
+
   return (
-    <section className="px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Search + filters */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search programs..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="pl-10"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-                aria-label="Clear search"
-              >
-                <X className="size-4 text-muted-foreground" />
-              </button>
-            )}
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Hero Section */}
+      <section className="border-b px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          {activeCategory && activeCategory !== "all" && featuredCategory && (
+            <p className="mb-3 text-sm font-semibold tracking-wide text-blue-900 uppercase">
+              {featuredCategory.label}
+            </p>
+          )}
+          <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+                {activeCategory === "all" ? "All Programs" : "Career Advancement"}
+              </h1>
+              <p className="mt-2 text-lg text-slate-600">
+                {activeCategory === "all"
+                  ? "Choose your path to professional excellence"
+                  : "Build your competitive advantage"}
+              </p>
+            </div>
+            <Link href="/programs">
+              <Button variant="outline" className="whitespace-nowrap">
+                View All Programs
+                <ChevronRight className="ml-2 size-4" />
+              </Button>
+            </Link>
           </div>
         </div>
+      </section>
 
-        {/* Category pills */}
-        <div className="mb-8 flex flex-wrap gap-2">
-          <button
-            onClick={() => handleCategoryClick("all")}
-            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-              activeCategory === "all"
-                ? "bg-wf-mint text-white"
-                : "border text-muted-foreground hover:bg-muted/50"
-            }`}
-          >
-            All Programs
-          </button>
-          {categories.map((cat) => (
+      {/* Search & Filters */}
+      <section className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          {/* Search Box */}
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                placeholder="Search programs..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-10"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  aria-label="Clear search"
+                >
+                  <X className="size-4 text-slate-400" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Category Pills */}
+          <div className="mb-8 flex flex-wrap gap-2">
             <button
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat.slug)}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
-                activeCategory === cat.slug
-                  ? "bg-wf-mint text-white"
-                  : "border text-muted-foreground hover:bg-muted/50"
+              onClick={() => handleCategoryClick("all")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                activeCategory === "all"
+                  ? "bg-blue-900 text-white shadow-lg"
+                  : "border border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50"
               }`}
             >
-              {cat.label}
+              All Programs
             </button>
-          ))}
-        </div>
-
-        {/* Results count */}
-        <p className="mb-6 text-xs text-muted-foreground">
-          {filtered.length} program{filtered.length !== 1 ? "s" : ""} found
-        </p>
-
-        {/* Grid */}
-        {filtered.length === 0 ? (
-          <div className="py-20 text-center">
-            <p className="text-lg font-medium text-foreground">
-              No programs found
-            </p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Try adjusting your search or filters.
-            </p>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryClick(cat.slug)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                  activeCategory === cat.slug
+                    ? "bg-blue-900 text-white shadow-lg"
+                    : "border border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-blue-50"
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((program) => {
-              const pFeatures = features.filter(
-                (f) => f.program_id === program.id
-              )
-              const pPricing = pricing.filter(
-                (p) => p.program_id === program.id
-              )
-              const startingPrice = pPricing.find((p) => p.price)?.price
 
-              return (
-                <Link
-                  key={program.id}
-                  href={`/programs/${program.slug}`}
-                  className="group flex flex-col rounded-2xl border bg-card p-6 transition-all hover:shadow-lg hover:border-wf-mint/30"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <span
-                      className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white"
-                      style={{
-                        backgroundColor: program.color || "#00c892",
-                      }}
-                    >
-                      {program.badge || program.name}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="size-3" />
-                      {program.duration}
-                    </span>
-                  </div>
+          {/* Results Count */}
+          <p className="mb-8 text-sm text-slate-600">
+            {filtered.length} program{filtered.length !== 1 ? "s" : ""} available
+          </p>
 
-                  <h3 className="text-lg font-bold text-card-foreground transition-colors group-hover:text-wf-mint">
-                    {program.name}
-                  </h3>
-                  <p className="mt-1 text-xs font-medium text-wf-mint">
-                    {program.tagline}
-                  </p>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-3">
-                    {program.description}
-                  </p>
+          {/* Programs Grid */}
+          {filtered.length === 0 ? (
+            <div className="py-20 text-center">
+              <p className="text-lg font-semibold text-slate-900">
+                No programs found
+              </p>
+              <p className="mt-2 text-slate-600">
+                Try adjusting your search or explore other categories.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((program) => {
+                const pFeatures = features
+                  .filter((f) => f.program_id === program.id)
+                  .slice(0, 3)
+                const pPricing = pricing.filter(
+                  (p) => p.program_id === program.id
+                )
+                const basePrice = pPricing.find((p) => p.price_cents)
 
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Users className="size-3" />
-                    {program.audience}
-                  </div>
+                return (
+                  <Link
+                    key={program.id}
+                    href={`/programs/${program.slug}`}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/5"
+                  >
+                    {/* Top Accent Border */}
+                    <div className="h-1 bg-blue-900" />
 
-                  {pFeatures.length > 0 && (
-                    <div className="mt-4 flex flex-col gap-1.5">
-                      {pFeatures.slice(0, 3).map((feat) => (
-                        <div
-                          key={feat.id}
-                          className="flex items-center gap-2 text-xs text-muted-foreground"
-                        >
-                          <CheckCircle2 className="size-3 shrink-0 text-wf-mint" />
-                          {feat.title}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="mt-5 flex items-center justify-between border-t pt-4">
-                    {startingPrice ? (
-                      <div>
-                        <span className="text-xl font-bold text-foreground">
-                          ${startingPrice}
+                    <div className="flex flex-col p-6">
+                      {/* Header: Badge + Duration */}
+                      <div className="mb-4 flex items-center justify-between">
+                        <span className="inline-block rounded-full bg-blue-900 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                          {program.title.split(" ")[0]}-Badge
                         </span>
-                        <span className="ml-1 text-xs text-muted-foreground">
-                          starting
+                        {program.duration && (
+                          <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                            <Clock className="size-3.5" />
+                            {program.duration}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title + Tagline */}
+                      <h3 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-blue-900">
+                        {program.title}
+                      </h3>
+                      {program.tagline && (
+                        <p className="mt-1 text-sm font-semibold text-blue-900">
+                          {program.tagline}
+                        </p>
+                      )}
+
+                      {/* Description */}
+                      {program.description && (
+                        <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                          {program.description}
+                        </p>
+                      )}
+
+                      {/* Features List */}
+                      {pFeatures.length > 0 && (
+                        <div className="mt-4 space-y-2">
+                          {pFeatures.map((feat) => (
+                            <div
+                              key={feat.id}
+                              className="flex items-start gap-2.5 text-sm text-slate-700"
+                            >
+                              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-blue-700" />
+                              <span>{feat.feature}</span>
+                            </div>
+                          ))}
+                          {features.filter((f) => f.program_id === program.id).length > 3 && (
+                            <p className="mt-1 text-xs font-medium text-slate-500">
+                              +{features.filter((f) => f.program_id === program.id).length - 3} more features
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Footer: Contact Us + Learn More */}
+                      <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+                        <span className="text-sm text-slate-500">
+                          Contact Us
+                        </span>
+                        <span className="flex items-center gap-1 text-sm font-bold text-blue-900 transition-all group-hover:gap-2">
+                          Learn More
+                          <ChevronRight className="size-4" />
                         </span>
                       </div>
-                    ) : (
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Contact Us
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1 text-sm font-semibold text-wf-mint transition-all group-hover:gap-2">
-                      Details
-                      <ChevronRight className="size-4" />
-                    </span>
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        )}
-      </div>
-    </section>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
   )
 }

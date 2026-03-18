@@ -20,15 +20,12 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-wf-mint">
-            <TrendingUp className="size-5 text-white" />
+          <div className="flex size-9 items-center justify-center rounded-lg bg-blue-900">
+            <span className="text-sm font-bold text-white">VC</span>
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-serif text-base font-bold tracking-tight text-foreground">
-              Transformer Hub
-            </span>
-            <span className="text-[11px] font-semibold tracking-wider text-wf-mint uppercase">
-              Institute
+              Vinings Church
             </span>
           </div>
         </Link>
@@ -41,7 +38,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
               href={link.href}
               className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 pathname === link.href
-                  ? "bg-wf-mint/10 text-wf-mint"
+                  ? "bg-blue-100 text-blue-900"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               }`}
             >
@@ -56,7 +53,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
             <Button
               asChild
               size="sm"
-              className="rounded-lg bg-wf-mint text-white hover:bg-wf-mint-light"
+              className="rounded-lg bg-blue-900 text-white hover:bg-blue-800"
             >
               <Link href="/dashboard">Dashboard</Link>
             </Button>
@@ -68,7 +65,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
               <Button
                 asChild
                 size="sm"
-                className="rounded-lg bg-wf-mint text-white hover:bg-wf-mint-light"
+                className="rounded-lg bg-blue-900 text-white hover:bg-blue-800"
               >
                 <Link href="/signup">Get Started</Link>
               </Button>
@@ -101,7 +98,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
                 onClick={() => setMobileOpen(false)}
                 className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   pathname === link.href
-                    ? "bg-wf-mint/10 text-wf-mint"
+                    ? "bg-blue-100 text-blue-900"
                     : "text-muted-foreground hover:bg-muted/50"
                 }`}
               >
@@ -113,7 +110,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
             {user ? (
               <Button
                 asChild
-                className="rounded-lg bg-wf-mint text-white hover:bg-wf-mint-light"
+                className="rounded-lg bg-blue-900 text-white hover:bg-blue-800"
               >
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
@@ -124,7 +121,7 @@ export function PlatformHeader({ user }: { user: { email?: string } | null }) {
                 </Button>
                 <Button
                   asChild
-                  className="rounded-lg bg-wf-mint text-white hover:bg-wf-mint-light"
+                  className="rounded-lg bg-blue-900 text-white hover:bg-blue-800"
                 >
                   <Link href="/signup">Get Started</Link>
                 </Button>
