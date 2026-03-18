@@ -392,17 +392,31 @@ export function JourneyClient({
                 <Play className="mr-2 size-4" />
                 {selectedDay === currentDay ? "Start Session" : "View Session"}
               </Button>
-              <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
-                <div className="h-2.5 w-20 overflow-hidden rounded-full bg-white/20">
-                  <div
-                    className="h-full rounded-full bg-white transition-all duration-500"
-                    style={{ width: `${todayProgress}%` }}
-                  />
+              {/* Circular progress ring */}
+              {todayActionsTotal > 0 && (
+                <div className="relative flex size-12 shrink-0 items-center justify-center">
+                  <svg className="size-12 -rotate-90" viewBox="0 0 36 36">
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.2)"
+                      strokeWidth="3"
+                    />
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeDasharray={`${(todayActionsDone / todayActionsTotal) * 94.25} 94.25`}
+                      className="transition-all duration-500"
+                    />
+                  </svg>
+                  <span className="absolute text-xs font-bold text-white">
+                    {todayActionsDone}/{todayActionsTotal}
+                  </span>
                 </div>
-                <span className="text-sm font-bold text-white">
-                  {todayActionsDone}/{todayActionsTotal}
-                </span>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -603,22 +617,27 @@ export function JourneyClient({
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="hidden items-center gap-2 sm:flex">
-                    <div className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${todayActionsTotal > 0 ? (todayActionsDone / todayActionsTotal) * 100 : 0}%`,
-                          backgroundColor: activePhase.color,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <span
-                    className="rounded-full px-3 py-1 text-sm font-bold text-white whitespace-nowrap"
-                    style={{ backgroundColor: activePhase.color }}
-                  >
+                {/* Circular progress ring for Act section */}
+                <div className="relative flex size-11 shrink-0 items-center justify-center">
+                  <svg className="size-11 -rotate-90" viewBox="0 0 36 36">
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      className="text-muted"
+                    />
+                    <circle
+                      cx="18" cy="18" r="15"
+                      fill="none"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeDasharray={`${todayActionsTotal > 0 ? (todayActionsDone / todayActionsTotal) * 94.25 : 0} 94.25`}
+                      style={{ stroke: activePhase.color }}
+                      className="transition-all duration-500"
+                    />
+                  </svg>
+                  <span className="absolute text-xs font-bold text-foreground">
                     {todayActionsDone}/{todayActionsTotal}
                   </span>
                 </div>
